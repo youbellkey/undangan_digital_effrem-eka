@@ -1,0 +1,230 @@
+/* ==========================================================================
+   ULTRA-PREMIUM VVIP EFFECTS (effects.css)
+   Contains animations, particles, shimmer, preloader, depth of field, etc.
+   ========================================================================== */
+
+/* JS PARALLAX CONTAINERS */
+.js-parallax-container {
+    position: relative;
+    overflow: hidden;
+    background-image: url('assets/dayak_bg_dark_1782738492802.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+.js-parallax-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    will-change: transform;
+}
+.mix-blend-screen {
+    mix-blend-mode: screen;
+}
+
+/* 1. PRELOADER */
+#preloader {
+  position: fixed; inset: 0; background: #050506; z-index: 9999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 1.5s ease, visibility 1.5s ease;
+}
+.preloader-hidden { opacity: 0; visibility: hidden; }
+.heart-beat {
+  width: 50px; height: 50px; background-color: #D32F2F;
+  transform: rotate(-45deg); animation: heartbeat 1.2s infinite;
+}
+.heart-beat::before, .heart-beat::after {
+  content: ""; position: absolute; width: 50px; height: 50px;
+  background-color: #D32F2F; border-radius: 50%;
+}
+.heart-beat::before { top: -25px; left: 0; }
+.heart-beat::after { top: 0; left: 25px; }
+@keyframes heartbeat {
+  0% { transform: scale(1) rotate(-45deg); }
+  20% { transform: scale(1.2) rotate(-45deg); }
+  40% { transform: scale(1) rotate(-45deg); }
+}
+#preloader h1 {
+  opacity: 0;
+  animation: preloader-text-in 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+}
+#preloader p {
+  opacity: 0;
+  animation: fade-in 1s ease 1s forwards;
+}
+@keyframes preloader-text-in {
+  0% { opacity: 0; filter: blur(10px); transform: scale(0.9); }
+  100% { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+@keyframes fade-in {
+  to { opacity: 1; }
+}
+
+/* 2. DIGITAL ENVELOPE (Welcome Screen) */
+#welcome-overlay {
+  transition: transform 2s cubic-bezier(0.77, 0, 0.175, 1);
+  transform-origin: top;
+}
+.slide-up { transform: translateY(-100%) scaleY(0.9); opacity: 0; }
+
+/* 3. SCROLL PROGRESS BAR */
+#scroll-progress {
+  position: fixed; top: 0; left: 0; height: 4px; background: #FFC107;
+  width: 0%; z-index: 10000; transition: width 0.1s ease;
+  box-shadow: 0 0 10px #FFC107;
+}
+
+/* 4. SHIMMER EFFECT */
+.shimmer {
+  position: relative; overflow: hidden;
+}
+.shimmer::after {
+  content: ""; position: absolute; top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.6), transparent);
+  transform: skewX(-20deg); animation: shimmer-sweep 4s infinite;
+}
+@keyframes shimmer-sweep {
+  0% { left: -100%; }
+  20% { left: 200%; }
+  100% { left: 200%; }
+}
+
+/* 5. TOUCH RIPPLE (Magic Cursor) */
+.touch-ripple {
+  position: fixed; border-radius: 50%; border: 2px solid #FFC107;
+  pointer-events: none; transform: translate(-50%, -50%) scale(0);
+  animation: ripple-anim 0.6s ease-out forwards; z-index: 9999;
+}
+@keyframes ripple-anim {
+  to { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+
+/* 6. FIREFLIES & FALLING LEAVES (Particles) */
+#particles-container {
+  position: fixed; inset: 0; pointer-events: none; z-index: 996; overflow: hidden;
+}
+.firefly {
+  position: absolute; background: #FFC107; border-radius: 50%;
+  box-shadow: 0 0 8px 2px #FFC107; opacity: 0;
+  animation: float-up linear infinite, glow 2s ease-in-out infinite alternate;
+}
+.falling-leaf {
+  position: absolute; width: 12px; height: 18px; background: #D32F2F;
+  border-radius: 10px 0 10px 0; opacity: 0.7;
+  animation: fall-down linear infinite;
+  box-shadow: inset 2px 2px 4px rgba(255,255,255,0.3);
+}
+@keyframes float-up {
+  0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100px) translateX(50px); opacity: 0; }
+}
+@keyframes glow { from { opacity: 0.4; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
+@keyframes fall-down {
+  0% { transform: translateY(-100px) rotate(0deg) translateX(0); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(100vh) rotate(360deg) translateX(-100px); opacity: 0; }
+}
+
+/* 7. DANCING BARS (Music Visualizer) */
+.dancing-bars { display: flex; gap: 3px; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); }
+.bar { width: 4px; height: 10px; background: #D32F2F; border-radius: 2px; animation: dance 0.5s ease infinite alternate; }
+.bar:nth-child(2) { animation-delay: 0.1s; }
+.bar:nth-child(3) { animation-delay: 0.2s; }
+.music-btn:not(.playing) .dancing-bars { display: none; }
+@keyframes dance { from { height: 5px; } to { height: 15px; } }
+
+/* 8. SWAYING ORNAMENTS & DEPTH OF FIELD */
+.sway { transform-origin: top center; animation: swaying 6s ease-in-out infinite alternate; }
+@keyframes swaying { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+
+/* 9. TYPEWRITER EFFECT -> ROMANTIC MULTILINE REVEAL */
+.typewriter-ready { 
+  opacity: 0; 
+  filter: blur(8px); 
+  transform: translateY(15px);
+  transition: opacity 2.5s ease, filter 2.5s ease, transform 2.5s ease;
+}
+.typewriter-ready.is-visible { 
+  opacity: 1; 
+  filter: blur(0); 
+  transform: translateY(0); 
+}
+.typing-cursor {
+  color: #FFC107;
+  font-weight: bold;
+  animation: blink-cursor 0.75s step-end infinite;
+}
+@keyframes blink-cursor {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* 10. SCROLL REVEAL ANIMATIONS */
+.reveal { opacity: 0; transform: translateY(30px); transition: all var(--duration-base) var(--ease-out); }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+.reveal-3d { opacity: 0; transform: translateY(30px) rotateX(15deg); transition: all 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.reveal-3d.is-visible { opacity: 1; transform: translateY(0) rotateX(0); }
+
+/* VVIP Premium Reveals */
+.reveal-zoom { opacity: 0; transform: scale(0.85); transition: all 1.5s var(--ease-out); }
+.reveal-zoom.is-visible { opacity: 1; transform: scale(1); }
+
+.reveal-slide-left { opacity: 0; transform: translateX(-40px); transition: all 1.5s var(--ease-out); }
+.reveal-slide-left.is-visible { opacity: 1; transform: translateX(0); }
+
+.reveal-slide-right { opacity: 0; transform: translateX(40px); transition: all 1.5s var(--ease-out); }
+.reveal-slide-right.is-visible { opacity: 1; transform: translateX(0); }
+
+.reveal-flip { opacity: 0; transform: perspective(400px) rotateY(90deg); transition: all 1.2s var(--ease-out); }
+.reveal-flip.is-visible { opacity: 1; transform: perspective(400px) rotateY(0deg); }
+
+/* Stagger Delays */
+.delay-100 { transition-delay: 100ms !important; }
+.delay-200 { transition-delay: 200ms !important; }
+.delay-300 { transition-delay: 300ms !important; }
+.delay-400 { transition-delay: 400ms !important; }
+.delay-500 { transition-delay: 500ms !important; }
+.delay-600 { transition-delay: 600ms !important; }
+
+/* 11. CONFETTI */
+.confetti { position: fixed; top: -10px; width: 10px; height: 10px; z-index: 9999; animation: confetti-fall 3s ease-out forwards; pointer-events: none; }
+@keyframes confetti-fall {
+  0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* 12. SCROLL INDICATOR */
+@keyframes float-scroll {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(10px); }
+}
+.animate-float-scroll {
+  animation: float-scroll 2.5s ease-in-out infinite;
+}
+@keyframes pulse-chevron {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+.animate-pulse-chevron {
+  animation: pulse-chevron 2s ease-in-out infinite;
+}
+
+/* 12. VIGNETTE & SMOOTH OVERLAY */
+.vignette-overlay {
+  position: fixed; inset: 0; pointer-events: none; z-index: 997;
+  background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.6) 150%);
+}
+.warm-overlay {
+  position: fixed; inset: 0; pointer-events: none; z-index: 996;
+  background: rgba(255, 193, 7, 0.05); mix-blend-mode: overlay;
+}
+
+/* 13. GYROSCOPE TILT PARALLAX */
+.gyro-element {
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
