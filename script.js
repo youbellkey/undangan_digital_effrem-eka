@@ -391,4 +391,66 @@
       img.addEventListener('load', () => img.classList.add('loaded'));
     }
   });
+  /* ---------------- PREMIUM SLIDER ---------------- */
+  const slider = document.getElementById('gallerySlider');
+  if (slider) {
+      const slides = slider.querySelectorAll('.slider-slide');
+      const prevBtn = document.getElementById('sliderPrev');
+      const nextBtn = document.getElementById('sliderNext');
+      const indicatorsContainer = document.getElementById('sliderIndicators');
+      let currentSlide = 0;
+      let slideInterval;
+      const totalSlides = slides.length;
+
+      for(let i=0; i<totalSlides; i++) {
+          const thumb = document.createElement('img');
+          thumb.src = slides[i].querySelector('img').src;
+          thumb.className = 'slider-thumb' + (i===0 ? ' active' : '');
+          thumb.setAttribute('alt', 'Thumbnail ' + (i+1));
+          thumb.addEventListener('click', () => goToSlide(i));
+          indicatorsContainer.appendChild(thumb);
+      }
+      const thumbs = indicatorsContainer.querySelectorAll('.slider-thumb');
+
+      function goToSlide(index) {
+          slides[currentSlide].classList.remove('active');
+          thumbs[currentSlide].classList.remove('active');
+          currentSlide = (index + totalSlides) % totalSlides;
+          slides[currentSlide].classList.add('active');
+          thumbs[currentSlide].classList.add('active');
+          
+          // Auto-scroll thumbnail container to keep active thumb in view
+          const activeThumb = thumbs[currentSlide];
+          indicatorsContainer.scrollTo({
+              left: activeThumb.offsetLeft - (indicatorsContainer.clientWidth / 2) + (activeThumb.clientWidth / 2),
+              behavior: 'smooth'
+          });
+          
+          resetInterval();
+      }
+
+      function nextSlide() { goToSlide(currentSlide + 1); }
+      function prevSlide() { goToSlide(currentSlide - 1); }
+
+      prevBtn.addEventListener('click', prevSlide);
+      nextBtn.addEventListener('click', nextSlide);
+
+      function resetInterval() {
+          clearInterval(slideInterval);
+          slideInterval = setInterval(nextSlide, 4000);
+      }
+      resetInterval();
+
+      let touchStartX = 0;
+      let touchEndX = 0;
+      slider.addEventListener('touchstart', e => {
+          touchStartX = e.changedTouches[0].screenX;
+      }, {passive: true});
+      slider.addEventListener('touchend', e => {
+          touchEndX = e.changedTouches[0].screenX;
+          if (touchStartX - touchEndX > 50) nextSlide();
+          if (touchEndX - touchStartX > 50) prevSlide();
+      }, {passive: true});
+  }
+
 })();

@@ -2,16 +2,16 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Undangan pernikahan digital Effrem & Eka — 24 Juli 2026">
-    <title>Undangan Pernikahan Katolik — Effrem & Eka</title>
+    <title>Undangan Pernikahan — Effrem & Eka</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Great+Vibes&display=block" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="effects.css">
 </head>
-<body class="font-sans antialiased bg-[#050506] text-gray-800 overflow-hidden" id="body-lock">
+<body class="font-sans antialiased overflow-hidden" id="body-lock">
 
     <!-- ============ PRELOADER ============ -->
     <div id="preloader">
@@ -37,21 +37,21 @@
     <div id="toast" role="status" aria-live="polite"></div>
 
     <!-- ============ WELCOME OVERLAY (Digital Envelope) ============ -->
-    <div id="welcome-overlay" class="fixed inset-0 z-50 flex items-center justify-center">
+    <div id="welcome-overlay">
         <div class="envelope-flap"></div>
         <div class="welcome-bg bg-black">
             <img src="assets/dayak_bg_dark_1782738492802.png" alt="" class="w-full h-full object-cover opacity-50" aria-hidden="true">
         </div>
 
-        <div class="glass-card max-w-lg w-full text-center p-10 transform transition-all duration-700 hover:scale-105 gyro-element" data-depth="1.5">
+        <div class="c-glass-panel max-w-lg w-full text-center p-10 transform transition-all duration-700 hover:scale-105 gyro-element" data-depth="1.5">
             <i class="fas fa-cross text-4xl text-[#A12020] mb-4 text-shadow-glow" aria-hidden="true"></i>
-            <h4 class="text-sm uppercase tracking-widest text-[#6B5C52] mb-2 font-bold text-shadow">Undangan Sakramen Perkawinan</h4>
+            <h4 class="text-sm uppercase tracking-widest text-[#6B5C52] mb-2 font-bold text-shadow">Undangan Pernikahan</h4>
             <h1 id="welcome-title" class="text-5xl text-[#A12020] my-4 font-script text-shadow-lg">Effrem &amp; Eka</h1>
             <p class="text-[#4A1212] mb-6 italic text-sm text-shadow">Kepada Yth. Bapak/Ibu/Saudara/i</p>
             <div class="bg-gray-100 px-6 py-2 rounded-lg mb-8 border border-gray-300 w-full">
                 <span class="text-gray-800 font-bold text-lg">Tamu Undangan</span>
             </div>
-            <button onclick="openInvitation()" type="button" class="btn-primary font-bold py-3 px-8 rounded-full text-lg shadow-lg flex items-center justify-center gap-2 mx-auto mt-4">
+            <button onclick="openInvitation()" type="button" class="c-btn c-btn--primary mx-auto mt-4">
                 <i class="fas fa-envelope-open" aria-hidden="true"></i> Buka Undangan
             </button>
         </div>
@@ -65,7 +65,7 @@
         <section class="parallax-group js-parallax-container overflow-hidden" aria-label="Sampul undangan">
             <!-- Background Asli Parallax -->
             <div class="js-parallax-layer w-full h-full z-0" data-speed="0.2">
-                <img src="assets/1-original.webp" alt="" class="absolute inset-0 w-full h-full object-cover transform scale-[1.15]" aria-hidden="true">
+                <img src="assets/1-original.webp" alt="" class="img-safe-crop transform scale-[1.15]" aria-hidden="true">
             </div>
             <!-- Menggelapkan overlay agar teks emas/putih lebih kontras -->
             <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#050506]/95 z-0"></div>
@@ -75,12 +75,12 @@
                 <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="absolute top-0 w-full max-w-xl object-contain opacity-90 transform rotate-180" aria-hidden="true">
             </div>
 
-            <div class="parallax-layer layer-base flex flex-col items-center text-center px-4 w-full mt-10 relative z-10 overflow-hidden">
+            <div class="parallax-layer layer-base flex flex-col items-center justify-center text-center px-4 w-full h-full relative z-10 overflow-hidden" style="padding-top: max(var(--space-24), env(safe-area-inset-top));">
                 <i class="fas fa-cross text-5xl text-[#EBB55F] mb-6 text-shadow-glow reveal-zoom" aria-hidden="true"></i>
                 <p class="text-gray-100 tracking-[0.3em] uppercase mb-4 text-sm md:text-lg font-bold text-shadow-lg reveal delay-100">The Holy Matrimony Of</p>
-                <h1 class="text-6xl md:text-8xl text-[#EBB55F] font-extrabold mb-2 text-shadow-lg reveal-slide-left delay-200">Effrem</h1>
-                <p class="text-5xl md:text-6xl text-white font-script mb-2 text-shadow-lg reveal-zoom delay-300" aria-hidden="true">&amp;</p>
-                <h1 class="text-6xl md:text-8xl text-[#EBB55F] font-extrabold mb-8 text-shadow-lg reveal-slide-right delay-400">Eka</h1>
+                <h1 class="hero-name text-[#EBB55F] font-extrabold text-shadow-lg reveal-slide-left delay-200">Effrem</h1>
+                <p class="hero-ampersand text-white font-script text-shadow-lg reveal-zoom delay-300" aria-hidden="true">&amp;</p>
+                <h1 class="hero-name text-[#EBB55F] font-extrabold mb-8 text-shadow-lg reveal-slide-right delay-400">Eka</h1>
 
                 <div class="flex items-center justify-center gap-4 text-[#4A0A0A] text-xl font-bold bg-[#EBB55F] px-6 py-3 rounded-full shadow-lg border-2 border-white reveal-flip delay-500">
                     <span>25 . 07 . 2026</span>
@@ -92,7 +92,7 @@
                 <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="absolute bottom-0 w-full max-w-xl object-contain opacity-90" aria-hidden="true">
             </div>
             
-            <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center bg-black/60 px-5 py-3 rounded-full z-20 shadow-xl border border-white/20 animate-float-scroll backdrop-blur-sm">
+            <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center bg-black/60 px-5 py-3 rounded-full z-20 shadow-xl border border-white/20 animate-float-scroll backdrop-blur-sm" style="margin-bottom: env(safe-area-inset-bottom);">
                 <span class="text-xs mb-1 tracking-[0.2em] uppercase font-bold text-shadow">Gulir ke bawah</span>
                 <i class="fas fa-chevron-down text-xl text-[#FFC107] animate-pulse-chevron drop-shadow-md" aria-hidden="true"></i>
             </div>
@@ -103,44 +103,43 @@
             <div class="js-parallax-layer w-full h-full z-0" data-speed="0.2">
                 <img src="assets/2.webp" alt="" class="absolute inset-0 w-full h-full object-cover transform scale-[1.1] opacity-40" aria-hidden="true">
             </div>
-            <!-- Mengganti hitam polos dengan gradien romantis dark maroon -->
             <div class="absolute inset-0 bg-gradient-to-b from-[#2A0808]/80 to-[#0A0202]/95 z-0"></div>
 
-            <div class="max-w-4xl mx-auto px-6 relative z-10 pt-10">
+            <div class="c-container c-container--lg relative z-10 mx-auto px-6">
                 <!-- Teks Ayat/Kutipan -->
-                <div class="glass-card p-8 md:p-12 mb-20 text-center mx-auto max-w-2xl px-4 z-10">
-                    <p class="italic font-serif text-[#4A1212] text-lg leading-relaxed mb-4 js-typewriter min-h-[120px]">
+                <div class="c-glass-panel p-8 md:p-12 mb-20 text-center mx-auto max-w-2xl px-4 z-10">
+                    <p class="italic-quote js-typewriter min-h-[120px]">
                         "Demikianlah mereka bukan lagi dua, melainkan satu. Karena itu, apa yang telah dipersatukan Allah, tidak boleh diceraikan manusia."
                     </p>
-                    <p class="font-bold text-[#A12020] tracking-widest uppercase text-sm reveal">Matius 19:6</p>
+                    <p class="font-bold text-[#A12020] tracking-widest uppercase text-sm reveal mt-4">Matius 19:6</p>
                 </div>
 
-                <div class="ornament-divider"><span></span><i class="fab fa-pagelines" aria-hidden="true"></i><span></span></div>
+                <div class="c-divider reveal"><span></span><i class="fab fa-pagelines" aria-hidden="true"></i><span></span></div>
 
-                <div class="glass-card p-8 md:p-12 mt-16 mb-12">
-                    <p class="mb-12 text-gray-700 text-center text-lg reveal">Dengan penuh puji syukur atas karunia Tuhan, kami memohon doa restu Bapak/Ibu/Saudara/i pada pernikahan putra-putri kami:</p>
+                <div class="c-glass-panel p-8 md:p-12 mt-16 mb-12">
+                    <p class="mb-12 text-gray-700 text-center text-lg reveal mx-auto" style="max-width: 65ch;">Dengan penuh puji syukur atas karunia Tuhan, kami memohon doa restu Bapak/Ibu/Saudara/i pada pernikahan putra-putri kami:</p>
 
                     <div class="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-20">
                     <!-- Mempelai Pria -->
-                    <div class="text-center reveal">
+                    <div class="text-center reveal flex-1">
                         <div class="w-48 h-48 mx-auto rounded-full border-4 border-[#D32F2F] overflow-hidden mb-6 shadow-lg p-1 bg-white">
-                            <img src="https://placehold.co/400x400/D32F2F/FFFFFF?text=Foto+Effrem" alt="Foto mempelai pria — placeholder, ganti dengan foto asli" class="w-full h-full object-cover rounded-full" loading="lazy">
+                            <img src="assets/prewedding/memperlai pria.jpg" alt="Foto mempelai pria" class="w-full h-full object-cover object-top rounded-full" loading="lazy" decoding="async">
                         </div>
-                        <h2 class="text-4xl text-[#D32F2F] font-bold mb-2">Effrem<span class="data-placeholder-badge">contoh gelar</span></h2>
+                        <h2 class="text-4xl text-[#D32F2F] font-bold mb-2 font-serif">Effrem Panesidi, A.Md.Gz</h2>
                         <p class="text-sm text-gray-600 mb-1">Putra dari Keluarga</p>
-                        <p class="font-bold text-gray-800">Bpk. (Nama Ayah) &amp; Ibu (Nama Ibu)</p>
+                        <p class="font-bold text-gray-800">Bpk. Lambertus (Alm) &amp; Ibu Elisabet</p>
                     </div>
 
-                    <p class="text-7xl text-[#FFC107] font-script md:mt-0 mt-4" aria-hidden="true">&amp;</p>
+                    <p class="text-7xl text-[#FFC107] font-script md:mt-0 mt-4 reveal" aria-hidden="true">&amp;</p>
 
                     <!-- Mempelai Wanita -->
-                    <div class="text-center reveal">
+                    <div class="text-center reveal flex-1">
                         <div class="w-48 h-48 mx-auto rounded-full border-4 border-[#FFC107] overflow-hidden mb-6 shadow-lg p-1 bg-white">
-                            <img src="https://placehold.co/400x400/FFC107/8B0000?text=Foto+Eka" alt="Foto mempelai wanita — placeholder, ganti dengan foto asli" class="w-full h-full object-cover rounded-full" loading="lazy">
+                            <img src="assets/prewedding/mempelai wanita.jpg" alt="Foto mempelai wanita" class="w-full h-full object-cover object-top rounded-full" loading="lazy" decoding="async">
                         </div>
-                        <h2 class="text-4xl text-[#D32F2F] font-bold mb-2">Eka<span class="data-placeholder-badge">contoh gelar</span></h2>
+                        <h2 class="text-4xl text-[#D32F2F] font-bold mb-2 font-serif">Konstansia Eka, S.M</h2>
                         <p class="text-sm text-gray-600 mb-1">Putri dari Keluarga</p>
-                        <p class="font-bold text-gray-800">Bpk. (Nama Ayah) &amp; Ibu (Nama Ibu)</p>
+                        <p class="font-bold text-gray-800">Bpk. Simon Tete &amp; Ibu Petronela Suriati</p>
                     </div>
                 </div>
                 </div>
@@ -154,50 +153,67 @@
             </div>
             <div class="absolute inset-0 bg-gradient-to-b from-[#0A0202]/95 to-[#1A0505]/90 z-0"></div>
 
-            <div class="max-w-6xl mx-auto relative z-10">
-                <div class="glass-card p-6 md:p-8 text-center mb-16 reveal max-w-3xl mx-auto">
-                    <h2 class="text-4xl md:text-5xl text-[#D32F2F] font-bold mb-4">Kisah Cinta &amp; Momen Kami</h2>
-                    <p class="text-gray-600 italic text-lg">&ldquo;Segala sesuatu indah pada waktunya.&rdquo;</p>
+            <div class="c-container c-container--xl relative z-10 mx-auto">
+                <div class="c-glass-panel p-6 md:p-8 text-center mb-16 reveal max-w-3xl mx-auto">
+                    <h2 class="text-4xl md:text-5xl text-[#D32F2F] font-bold mb-4 font-serif">Kisah Cinta &amp; Momen Kami</h2>
+                    <p class="text-gray-600 italic-quote text-lg">&ldquo;Segala sesuatu indah pada waktunya.&rdquo;</p>
                 </div>
 
                 <div class="flex flex-col lg:flex-row gap-12">
                     <!-- Love Story Timeline -->
-                    <div class="lg:w-1/3 glass-card p-6 reveal">
+                    <div class="lg:w-1/3 c-glass-panel p-6 reveal">
                         <h3 class="text-2xl text-[#8B0000] font-bold mb-8 border-b-2 border-[#FFC107] inline-block pb-2"><i class="fas fa-heart text-[#D32F2F] mr-2" aria-hidden="true"></i> Perjalanan Kasih</h3>
-                        <ol class="timeline list-none overflow-hidden">
-                            <li class="timeline-item reveal-slide-left delay-100">
-                                <h4 class="font-bold text-[#D32F2F] text-lg">Pertama Bertemu</h4>
-                                <p class="text-sm font-bold text-gray-500 mb-2 bg-gray-100 inline-block px-2 rounded">Contoh: Desember 2022</p>
+                        <ol class="c-timeline list-none overflow-hidden">
+                            <li class="c-timeline__item reveal-slide-left delay-100">
+                                <h4 class="font-bold text-[#D32F2F] text-lg font-serif">Pertama Bertemu</h4>
+                                <p class="c-badge mb-2">Desember 2022</p>
                                 <p class="text-gray-700 text-sm mt-1">Ceritakan momen pertama kali bertemu di sini.</p>
                             </li>
-                            <li class="timeline-item reveal-slide-left delay-200">
-                                <h4 class="font-bold text-[#D32F2F] text-lg">Menjalin Kasih</h4>
-                                <p class="text-sm font-bold text-gray-500 mb-2 bg-gray-100 inline-block px-2 rounded">Contoh: Juni 2023</p>
+                            <li class="c-timeline__item reveal-slide-left delay-200">
+                                <h4 class="font-bold text-[#D32F2F] text-lg font-serif">Menjalin Kasih</h4>
+                                <p class="c-badge mb-2">Juni 2023</p>
                                 <p class="text-gray-700 text-sm mt-1">Ceritakan momen mulai berkomitmen di sini.</p>
                             </li>
-                            <li class="timeline-item reveal-slide-left delay-300">
-                                <h4 class="font-bold text-[#D32F2F] text-lg">Lamaran</h4>
-                                <p class="text-sm font-bold text-gray-500 mb-2 bg-gray-100 inline-block px-2 rounded">Contoh: Januari 2026</p>
+                            <li class="c-timeline__item reveal-slide-left delay-300">
+                                <h4 class="font-bold text-[#D32F2F] text-lg font-serif">Lamaran</h4>
+                                <p class="c-badge mb-2">Januari 2026</p>
                                 <p class="text-gray-700 text-sm mt-1">Ceritakan momen lamaran di sini.</p>
                             </li>
                         </ol>
                     </div>
 
-                    <!-- Galeri & Video -->
+                    <!-- Galeri -->
                     <div class="lg:w-2/3 reveal">
-                        <div class="w-full aspect-video bg-gray-800 rounded-2xl overflow-hidden relative mb-6 border-4 border-[#FFC107] shadow-xl flex items-center justify-center group">
-                            <img src="https://placehold.co/800x450/1A1A1A/FFC107?text=Video+Prewedding" alt="Thumbnail video prewedding — placeholder" class="absolute inset-0 w-full h-full object-cover opacity-70" loading="lazy">
-                            <div class="absolute inset-0 bg-black/20"></div>
-                            <button type="button" class="relative z-10 text-7xl text-white hover:text-[#FFC107] transition" aria-label="Putar video prewedding">
-                                <i class="fas fa-play-circle" aria-hidden="true"></i>
-                            </button>
-                        </div>
-
-                        <div class="photo-grid">
-                            <img src="https://placehold.co/400x400/D32F2F/FFFFFF?text=Foto+1" alt="Foto galeri 1" class="photo-item shadow-md reveal-zoom delay-100" loading="lazy">
-                            <img src="https://placehold.co/400x400/FFC107/8B0000?text=Foto+2" alt="Foto galeri 2" class="photo-item shadow-md reveal-zoom delay-200" loading="lazy">
-                            <img src="https://placehold.co/400x400/8B0000/FFFFFF?text=Foto+3" alt="Foto galeri 3" class="photo-item shadow-md reveal-zoom delay-300" loading="lazy">
-                            <img src="https://placehold.co/400x400/1A1A1A/FFC107?text=Foto+4" alt="Foto galeri 4" class="photo-item shadow-md reveal-zoom delay-400" loading="lazy">
+                        <div class="premium-slider" id="gallerySlider">
+                            <div class="slider-wrapper" id="sliderWrapper">
+                                <div class="slider-slide active">
+                                    <img src="assets/prewedding/IMG-20260712-WA0025.jpg" alt="Foto galeri 1" loading="lazy" decoding="async">
+                                </div>
+                                <div class="slider-slide">
+                                    <img src="assets/prewedding/IMG-20260712-WA0027.jpg" alt="Foto galeri 2" loading="lazy" decoding="async">
+                                </div>
+                                <div class="slider-slide">
+                                    <img src="assets/prewedding/IMG-20260712-WA0029.jpg" alt="Foto galeri 3" loading="lazy" decoding="async">
+                                </div>
+                                <div class="slider-slide">
+                                    <img src="assets/prewedding/IMG-20260712-WA0030.jpg" alt="Foto galeri 4" loading="lazy" decoding="async">
+                                </div>
+                                <div class="slider-slide">
+                                    <img src="assets/prewedding/IMG-20260712-WA0031.jpg" alt="Foto galeri 5" loading="lazy" decoding="async">
+                                </div>
+                                <div class="slider-slide">
+                                    <img src="assets/prewedding/IMG-20260712-WA0032.jpg" alt="Foto galeri 6" loading="lazy" decoding="async">
+                                </div>
+                                <div class="slider-slide">
+                                    <img src="assets/prewedding/IMG-20260712-WA0033.jpg" alt="Foto galeri 7" loading="lazy" decoding="async">
+                                </div>
+                                <div class="slider-slide">
+                                    <img src="assets/prewedding/IMG-20260712-WA0034.jpg" alt="Foto galeri 8" loading="lazy" decoding="async">
+                                </div>
+                            </div>
+                            <button class="slider-nav prev" id="sliderPrev" aria-label="Foto sebelumnya"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+                            <button class="slider-nav next" id="sliderNext" aria-label="Foto selanjutnya"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+                            <div class="slider-indicators" id="sliderIndicators"></div>
                         </div>
                     </div>
                 </div>
@@ -211,26 +227,26 @@
             </div>
             <div class="absolute inset-0 bg-gradient-to-b from-[#1A0505]/90 via-[#0A0202]/80 to-[#1A0505]/95 z-0"></div>
 
-            <div class="w-full px-4 flex flex-col items-center justify-center relative z-10">
+            <div class="w-full px-4 flex flex-col items-center justify-center relative z-10 c-container c-container--lg mx-auto">
 
-                <div class="glass-card p-6 md:p-8 w-full max-w-2xl text-center mb-12 border-4 border-[#FFC107] reveal">
+                <div class="c-glass-panel p-6 md:p-8 w-full max-w-2xl text-center mb-12 border-4 border-[#FFC107] reveal">
                     <h3 class="text-3xl text-[#D32F2F] font-bold mb-6 font-serif">Menuju Hari Bahagia</h3>
-                    <div id="countdown-timer" aria-live="off">
-                        <div class="countdown-item reveal-flip delay-100">
-                            <span id="days">00</span>
-                            <span class="countdown-label">Hari</span>
+                    <div id="countdown-timer" aria-live="off" class="c-countdown">
+                        <div class="c-countdown__item reveal-flip delay-100">
+                            <span id="days" class="c-countdown__value">00</span>
+                            <span class="c-countdown__label">Hari</span>
                         </div>
-                        <div class="countdown-item reveal-flip delay-200">
-                            <span id="hours">00</span>
-                            <span class="countdown-label">Jam</span>
+                        <div class="c-countdown__item reveal-flip delay-200">
+                            <span id="hours" class="c-countdown__value">00</span>
+                            <span class="c-countdown__label">Jam</span>
                         </div>
-                        <div class="countdown-item reveal-flip delay-300">
-                            <span id="minutes">00</span>
-                            <span class="countdown-label">Menit</span>
+                        <div class="c-countdown__item reveal-flip delay-300">
+                            <span id="minutes" class="c-countdown__value">00</span>
+                            <span class="c-countdown__label">Menit</span>
                         </div>
-                        <div class="countdown-item reveal-flip delay-400">
-                            <span id="seconds">00</span>
-                            <span class="countdown-label">Detik</span>
+                        <div class="c-countdown__item reveal-flip delay-400">
+                            <span id="seconds" class="c-countdown__value">00</span>
+                            <span class="c-countdown__label">Detik</span>
                         </div>
                     </div>
                 </div>
@@ -238,57 +254,57 @@
                 <div class="flex flex-col lg:flex-row gap-8 w-full max-w-5xl justify-center z-10">
 
                     <!-- Misa & Sakramen -->
-                    <div class="glass-card p-8 flex-1 text-center reveal">
+                    <div class="c-glass-panel p-8 flex-1 text-center reveal">
                         <i class="fas fa-church text-5xl text-[#D32F2F] mb-4" aria-hidden="true"></i>
                         <h3 class="text-3xl text-[#8B0000] font-bold mb-2 font-serif">Misa &amp; Sakramen</h3>
                         <div class="h-1 w-20 bg-[#FFC107] mx-auto mb-4 rounded"></div>
                         <p class="font-bold text-xl mb-2 text-gray-800">Sabtu, 25 Juli 2026</p>
                         <p class="bg-[#D32F2F] text-white inline-block px-4 py-1 rounded-full text-sm font-bold mb-4"><i class="far fa-clock" aria-hidden="true"></i> 11.00 WIB – selesai</p>
-                        <p class="text-gray-800 font-bold text-lg mb-1">Gereja Katolik Paroki (Nama Paroki)<span class="data-placeholder-badge">placeholder</span></p>
-                        <p class="text-sm text-gray-600 mb-6">(Alamat lengkap gereja)</p>
+                        <p class="text-gray-800 font-bold text-lg mb-1">Gereja Katolik Paroki Santo Petrus &amp; Paulus, Menjalin</p>
+                        <p class="text-sm text-gray-600 mb-6">Jl. Anjungan - Bengkayang, Raba, Kec. Menjalin, Kabupaten Landak, Kalimantan Barat 79362</p>
 
-                        <a href="https://maps.app.goo.gl/Y7hh1kwCi2oeAiEA9" target="_blank" rel="noopener" class="inline-block border-2 border-[#D32F2F] bg-white text-[#D32F2F] font-bold py-3 px-8 rounded-full hover:bg-[#D32F2F] hover:text-white transition shadow-lg mb-6 reveal delay-200">
+                        <a href="https://maps.app.goo.gl/Y7hh1kwCi2oeAiEA9" target="_blank" rel="noopener" class="c-btn c-btn--outline-red mb-6 reveal delay-200">
                             <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Buka Peta Lokasi
                         </a>
                         
                         <div class="mt-2 bg-white p-2 rounded-xl shadow-inner inline-block mx-auto mb-4 reveal-zoom delay-300">
                             <p class="text-xs text-gray-500 mb-2 font-bold uppercase tracking-widest">Scan Lokasi</p>
-                            <img src="assets/QR Gereja Katolik Paroki Santo Petrus & Paulus, Menjalin.png" alt="QR Code Peta Gereja" class="w-32 h-32 object-contain mx-auto" loading="lazy">
+                            <img src="assets/QR Gereja Katolik Paroki Santo Petrus & Paulus, Menjalin.png" alt="QR Code Peta Gereja" class="w-32 h-32 object-contain mx-auto" loading="lazy" decoding="async">
                         </div>
 
                         <div class="w-full h-48 rounded-xl overflow-hidden shadow-inner mb-6 border border-gray-200">
                             <iframe src="https://maps.google.com/maps?q=Gereja+Katolik+Paroki+Santo+Petrus+%26+Paulus,+Menjalin&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Peta Lokasi Gereja"></iframe>
                         </div>
 
-                        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Pemberkatan+Pernikahan+Effrem+%26+Eka&dates=20260725T040000Z/20260725T060000Z&details=Pemberkatan+Pernikahan+Effrem+dan+Eka&location=Gereja+Katolik+Paroki+Santo+Petrus+%26+Paulus,+Menjalin" target="_blank" rel="noopener" class="inline-block w-full bg-[#FFC107] text-[#8B0000] font-bold py-3 px-4 rounded-full hover:bg-[#e0a800] transition shadow-md">
+                        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Pemberkatan+Pernikahan+Effrem+%26+Eka&dates=20260725T040000Z/20260725T060000Z&details=Pemberkatan+Pernikahan+Effrem+dan+Eka&location=Gereja+Katolik+Paroki+Santo+Petrus+%26+Paulus,+Menjalin" target="_blank" rel="noopener" class="c-btn c-btn--primary w-full">
                             <i class="far fa-calendar-alt" aria-hidden="true"></i> Simpan ke Kalender
                         </a>
                     </div>
 
                     <!-- Resepsi -->
-                    <div class="glass-card-dark p-8 flex-1 text-center reveal">
+                    <div class="c-glass-panel--dark p-8 flex-1 text-center reveal">
                         <i class="fas fa-glass-cheers text-5xl text-[#FFC107] mb-4" aria-hidden="true"></i>
                         <h3 class="text-3xl text-[#FFC107] font-bold mb-2 font-serif">Resepsi</h3>
                         <div class="h-1 w-20 bg-white mx-auto mb-4 rounded"></div>
                         <p class="font-bold text-xl mb-2 text-white">Sabtu, 25 Juli 2026</p>
                         <p class="bg-[#FFC107] text-[#8B0000] inline-block px-4 py-1 rounded-full text-sm font-bold mb-4"><i class="far fa-clock" aria-hidden="true"></i> 13.00 WIB – selesai</p>
-                        <p class="text-white font-bold text-lg mb-1">(Nama Gedung / Lokasi Resepsi)<span class="data-placeholder-badge">placeholder</span></p>
-                        <p class="text-sm text-gray-300 mb-6">(Alamat lengkap lokasi resepsi)</p>
+                        <p class="text-white font-bold text-lg mb-1">Kediaman Keluarga Bpk. Lambertus (Alm)</p>
+                        <p class="text-sm text-gray-300 mb-6">Sungai Banong, Kecamatan Menjalin, Kabupaten Landak, Kalimantan Barat.</p>
 
-                        <a href="https://maps.app.goo.gl/YwUs74c1o7EznpFd9" target="_blank" rel="noopener" class="inline-block border-2 border-[#FFC107] bg-transparent text-[#FFC107] font-bold py-3 px-8 rounded-full hover:bg-[#FFC107] hover:text-[#1A1A1A] transition shadow-lg mb-6 reveal delay-200">
+                        <a href="https://maps.app.goo.gl/YwUs74c1o7EznpFd9" target="_blank" rel="noopener" class="c-btn c-btn--outline-yellow mb-6 reveal delay-200">
                             <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Buka Peta Lokasi
                         </a>
 
                         <div class="mt-2 bg-white/10 p-2 rounded-xl shadow-inner inline-block mx-auto border border-white/20 mb-4 reveal-zoom delay-300">
                             <p class="text-xs text-gray-300 mb-2 font-bold uppercase tracking-widest">Scan Lokasi</p>
-                            <img src="assets/QR Tempat Resepsi Nikah.png" alt="QR Code Peta Resepsi" class="w-32 h-32 object-contain mx-auto rounded bg-white p-1" loading="lazy">
+                            <img src="assets/QR Tempat Resepsi Nikah.png" alt="QR Code Peta Resepsi" class="w-32 h-32 object-contain mx-auto rounded bg-white p-1" loading="lazy" decoding="async">
                         </div>
 
                         <div class="w-full h-48 rounded-xl overflow-hidden shadow-inner mb-6 border border-white/20">
                             <iframe src="https://maps.google.com/maps?q=Lokasi+Resepsi&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Peta Lokasi Resepsi"></iframe>
                         </div>
 
-                        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Resepsi+Pernikahan+Effrem+%26+Eka&dates=20260725T060000Z/20260725T120000Z&details=Resepsi+Pernikahan+Effrem+dan+Eka&location=Lokasi+Resepsi" target="_blank" rel="noopener" class="inline-block w-full bg-[#FFC107] text-[#8B0000] font-bold py-3 px-4 rounded-full hover:bg-[#e0a800] transition shadow-md">
+                        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Resepsi+Pernikahan+Effrem+%26+Eka&dates=20260725T060000Z/20260725T120000Z&details=Resepsi+Pernikahan+Effrem+dan+Eka&location=Lokasi+Resepsi" target="_blank" rel="noopener" class="c-btn c-btn--primary w-full">
                             <i class="far fa-calendar-alt" aria-hidden="true"></i> Simpan ke Kalender
                         </a>
                     </div>
@@ -303,70 +319,70 @@
             </div>
             <div class="absolute inset-0 bg-gradient-to-b from-[#1A0505]/95 to-[#050506]/95 z-0"></div>
             
-            <div class="max-w-3xl mx-auto flex flex-col gap-12 relative z-10 w-full">
+            <div class="c-container c-container--md mx-auto flex flex-col gap-12 relative z-10 w-full">
 
                 <!-- RSVP, Gift, Guestbook -->
                 <div class="w-full">
                     <!-- RSVP -->
-                    <div class="glass-card p-8 border-t-8 border-[#D32F2F] mb-8 reveal">
+                    <div class="c-glass-panel p-8 border-t-8 border-[#D32F2F] mb-8 reveal">
                         <h3 class="text-2xl text-[#8B0000] font-bold mb-2 font-serif">Konfirmasi Kehadiran</h3>
                         <p class="text-sm text-gray-600 mb-6">Mohon kesediaan Anda mengisi form kehadiran di bawah ini.</p>
                         <form id="rsvpForm" novalidate>
-                            <label for="rsvpName" class="field-label">Nama lengkap<span class="req">*</span></label>
-                            <input type="text" id="rsvpName" name="rsvpName" required class="form-input" aria-describedby="rsvpName-error">
-                            <p id="rsvpName-error" class="field-error-msg" role="alert"></p>
+                            <label for="rsvpName" class="c-field-label">Nama lengkap<span class="req">*</span></label>
+                            <input type="text" id="rsvpName" name="rsvpName" required class="c-input" aria-describedby="rsvpName-error">
+                            <p id="rsvpName-error" class="c-error-msg" role="alert"></p>
 
-                            <label for="rsvpStatus" class="field-label">Konfirmasi kehadiran<span class="req">*</span></label>
-                            <select id="rsvpStatus" name="rsvpStatus" required class="form-select" aria-describedby="rsvpStatus-error">
+                            <label for="rsvpStatus" class="c-field-label">Konfirmasi kehadiran<span class="req">*</span></label>
+                            <select id="rsvpStatus" name="rsvpStatus" required class="c-input" aria-describedby="rsvpStatus-error">
                                 <option value="" disabled selected>Apakah Anda akan hadir?</option>
                                 <option value="Hadir">Ya, saya akan hadir</option>
                                 <option value="Tidak Hadir">Maaf, saya tidak bisa hadir</option>
                             </select>
-                            <p id="rsvpStatus-error" class="field-error-msg" role="alert"></p>
+                            <p id="rsvpStatus-error" class="c-error-msg" role="alert"></p>
 
-                            <label for="rsvpCount" class="field-label">Jumlah kehadiran (orang)</label>
-                            <input type="number" id="rsvpCount" name="rsvpCount" min="1" max="5" class="form-input">
+                            <label for="rsvpCount" class="c-field-label">Jumlah kehadiran (orang)</label>
+                            <input type="number" id="rsvpCount" name="rsvpCount" min="1" max="5" class="c-input">
 
-                            <button type="submit" class="w-full bg-[#D32F2F] text-white font-bold py-3 rounded-lg hover:bg-[#8B0000] transition shadow-lg text-lg" style="min-height:44px;">Kirim RSVP</button>
+                            <button type="submit" class="c-btn c-btn--primary w-full mt-2">Kirim RSVP</button>
                         </form>
                     </div>
 
                     <!-- Wedding Gift -->
-                    <div class="glass-card p-8 border-2 border-[#FFC107] mb-8 text-center reveal" style="background: rgba(255, 248, 225, 0.85);">
+                    <div class="c-glass-panel--warm p-8 mb-8 text-center reveal">
                         <i class="fas fa-gift text-5xl text-[#D32F2F] mb-4" aria-hidden="true"></i>
                         <h3 class="text-2xl text-[#8B0000] font-bold mb-2 font-serif">Wedding Gift</h3>
-                        <p class="text-sm text-gray-700 mb-6 leading-relaxed">Doa restu Anda adalah karunia terindah. Namun jika Anda ingin memberikan tanda kasih, dapat melalui:</p>
+                        <p class="text-sm text-gray-700 mb-6 mx-auto" style="max-width: 50ch;">Doa restu Anda adalah karunia terindah. Namun jika Anda ingin memberikan tanda kasih, dapat melalui:</p>
 
                         <div class="bg-white p-4 rounded-xl border border-gray-200 mb-4 flex justify-between items-center shadow-sm reveal-zoom delay-100">
                             <div class="text-left">
-                                <p class="font-bold text-[#1A1A1A] tracking-wider">XXXX-XXXX-XXXX<span class="data-placeholder-badge">contoh</span></p>
-                                <p class="text-gray-500 text-xs">a.n Effrem (Bank — placeholder)</p>
+                                <p class="font-bold text-[#1A1A1A] tracking-wider">1460023861649</p>
+                                <p class="text-gray-500 text-xs">a.n Effrem Panesidi (Bank Mandiri)</p>
                             </div>
-                            <button type="button" onclick="copyText('XXXX-XXXX-XXXX', 'Nomor rekening Effrem')" class="text-[#D32F2F] bg-gray-100 hover:bg-[#FFC107] hover:text-white p-3 rounded-lg transition" aria-label="Salin nomor rekening Effrem" style="min-width:44px;min-height:44px;"><i class="far fa-copy text-lg" aria-hidden="true"></i></button>
+                            <button type="button" onclick="copyText('1460023861649', 'Nomor rekening Effrem')" class="text-[#D32F2F] bg-gray-100 hover:bg-[#FFC107] hover:text-white p-3 rounded-lg transition" aria-label="Salin nomor rekening Effrem" style="min-width:44px;min-height:44px;"><i class="far fa-copy text-lg" aria-hidden="true"></i></button>
                         </div>
 
                         <div class="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-center shadow-sm reveal-zoom delay-200">
                             <div class="text-left">
-                                <p class="font-bold text-[#1A1A1A] tracking-wider">YYYY-YYYY-YYYY<span class="data-placeholder-badge">contoh</span></p>
-                                <p class="text-gray-500 text-xs">a.n Eka (Bank — placeholder)</p>
+                                <p class="font-bold text-[#1A1A1A] tracking-wider">482001015896539</p>
+                                <p class="text-gray-500 text-xs">a.n Konstansia Eka (Bank BRI)</p>
                             </div>
-                            <button type="button" onclick="copyText('YYYY-YYYY-YYYY', 'Nomor rekening Eka')" class="text-[#D32F2F] bg-gray-100 hover:bg-[#FFC107] hover:text-white p-3 rounded-lg transition" aria-label="Salin nomor rekening Eka" style="min-width:44px;min-height:44px;"><i class="far fa-copy text-lg" aria-hidden="true"></i></button>
+                            <button type="button" onclick="copyText('482001015896539', 'Nomor rekening Eka')" class="text-[#D32F2F] bg-gray-100 hover:bg-[#FFC107] hover:text-white p-3 rounded-lg transition" aria-label="Salin nomor rekening Eka" style="min-width:44px;min-height:44px;"><i class="far fa-copy text-lg" aria-hidden="true"></i></button>
                         </div>
                     </div>
 
                     <!-- Buku Ucapan -->
-                    <div class="glass-card p-8 border-t-8 border-[#FFC107] reveal">
+                    <div class="c-glass-panel p-8 border-t-8 border-[#FFC107] reveal">
                         <h3 class="text-2xl text-[#8B0000] font-bold mb-4 font-serif">Buku Tamu &amp; Doa</h3>
                         <form id="guestbookForm" novalidate class="mb-6">
-                            <label for="guestName" class="field-label">Nama Anda<span class="req">*</span></label>
-                            <input type="text" id="guestName" name="guestName" required class="guest-input" aria-describedby="guestName-error">
-                            <p id="guestName-error" class="field-error-msg" role="alert"></p>
+                            <label for="guestName" class="c-field-label">Nama Anda<span class="req">*</span></label>
+                            <input type="text" id="guestName" name="guestName" required class="c-input" aria-describedby="guestName-error">
+                            <p id="guestName-error" class="c-error-msg" role="alert"></p>
 
-                            <label for="guestMessage" class="field-label">Ucapan &amp; doa<span class="req">*</span></label>
-                            <textarea id="guestMessage" name="guestMessage" required rows="3" class="form-textarea" aria-describedby="guestMessage-error" placeholder="Tulis doa & ucapan..."></textarea>
-                            <p id="guestMessage-error" class="field-error-msg" role="alert"></p>
+                            <label for="guestMessage" class="c-field-label">Ucapan &amp; doa<span class="req">*</span></label>
+                            <textarea id="guestMessage" name="guestMessage" required rows="3" class="c-input c-input--textarea" aria-describedby="guestMessage-error" placeholder="Tulis doa & ucapan..."></textarea>
+                            <p id="guestMessage-error" class="c-error-msg" role="alert"></p>
 
-                            <button type="submit" class="w-full bg-[#FFC107] text-[#8B0000] font-bold py-3 rounded-lg hover:bg-[#e0a800] transition text-lg shadow-md" style="min-height:44px;">Kirim Ucapan</button>
+                            <button type="submit" class="c-btn w-full mt-2" style="background: var(--dayak-yellow); color: var(--dayak-red-dark);">Kirim Ucapan</button>
                         </form>
 
                         <div id="comments-box" role="list" aria-label="Daftar ucapan dari tamu" class="space-y-4 max-h-60 overflow-y-auto pr-2">
@@ -395,18 +411,17 @@
 
             <div class="w-full flex flex-col items-center justify-center text-center text-white px-6 relative z-10 py-20">
                 <h2 class="text-4xl md:text-6xl text-[#FFC107] font-bold mb-6 font-serif reveal text-outline">Terima Kasih</h2>
-                <p class="text-lg md:text-xl max-w-3xl font-light italic mb-8 px-4 leading-relaxed text-white reveal text-outline">
+                <p class="text-lg md:text-xl max-w-3xl font-light italic-quote mb-8 px-4 leading-relaxed text-white reveal text-outline">
                     Atas doa restu dan kehadiran Bapak/Ibu/Saudara/i dalam perayaan cinta kami.
                     <br><br>
                     &ldquo;Semoga Allah damai sejahtera menguduskan kamu seluruhnya dan semoga roh, jiwa dan tubuhmu terpelihara sempurna dengan tak bercacat pada kedatangan Yesus Kristus, Tuhan kita.&rdquo; (1 Tes 5:23)
                 </p>
                 <div class="h-px w-32 bg-[#FFC107] mx-auto mb-6 shadow-[0_0_8px_#FFC107]"></div>
                 <p class="font-bold text-xl uppercase tracking-widest text-[#FFC107] mb-2 text-outline">Kami yang berbahagia,</p>
-                <h3 class="text-5xl md:text-7xl font-script mt-2 mb-16 text-[#FFC107] text-outline">Effrem &amp; Eka</h3>
+                <h3 class="hero-name mt-2 mb-16 text-[#FFC107] text-outline" style="font-family: var(--font-script);">Effrem &amp; Eka</h3>
                 <div class="mt-10 flex flex-col items-center">
                     <p class="text-xs text-white mb-2 text-outline tracking-wider">Designed &amp; Developed by</p>
-                    <!-- Signature Fix (Black drop-shadow for contrast over bright ornament) -->
-                    <img src="assets/Signature Youbellkey.png" alt="Youbellkey Signature" class="h-10 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] brightness-0 invert" loading="lazy">
+                    <img src="assets/Signature Youbellkey.png" alt="Youbellkey Signature" class="h-10 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] brightness-0 invert" loading="lazy" decoding="async">
                 </div>
             </div>
 
