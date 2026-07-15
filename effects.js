@@ -11,13 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(progressBar);
     
     const parallaxLayers = document.querySelectorAll('.js-parallax-layer');
+    const mainScroll = document.getElementById('main-scroll') || window;
 
     let ticking = false;
-    window.addEventListener('scroll', () => {
+    mainScroll.addEventListener('scroll', () => {
         if (!ticking) {
             window.requestAnimationFrame(() => {
-                const scrollTop = window.scrollY || document.documentElement.scrollTop;
-                const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrollTop = mainScroll.scrollTop || window.scrollY || document.documentElement.scrollTop;
+                const scrollHeight = (mainScroll.scrollHeight || document.documentElement.scrollHeight) - (mainScroll.clientHeight || document.documentElement.clientHeight);
                 const scrollPercent = (scrollTop / scrollHeight) * 100;
                 progressBar.style.width = scrollPercent + '%';
 
@@ -25,9 +26,101 @@ document.addEventListener('DOMContentLoaded', () => {
                 parallaxLayers.forEach(layer => {
                     const speed = parseFloat(layer.getAttribute('data-speed')) || 0.2;
                     const rect = layer.parentElement.getBoundingClientRect();
-                    const yOffset = (rect.top - window.innerHeight/2) * speed;
+                    // Using rect.top directly ensures that when a section is at the top of the viewport, it has 0 offset.
+                    const yOffset = rect.top * speed;
                     layer.style.transform = `translate3d(0, ${yOffset}px, 0)`;
                 });
+
+                // --- CUSTOM HERO CINEMATIC SCROLL ---
+                const heroGroup = document.querySelector('section[aria-label="Sampul undangan"]');
+                if (heroGroup) {
+                    const heroRect = heroGroup.getBoundingClientRect();
+                    // Only animate if the hero is visible or scrolling out
+                    if (heroRect.top <= 0 && heroRect.bottom > 0) {
+                        // Progress goes from 0 (at top) to 1 (scrolled out completely)
+                        let progress = Math.abs(heroRect.top) / window.innerHeight;
+                        // Clamp progress
+                        progress = Math.min(1, Math.max(0, progress));
+
+                        const goldLeft = document.querySelector('.js-hero-gold-left');
+                        const goldRight = document.querySelector('.js-hero-gold-right');
+                        const photo = document.querySelector('.js-hero-photo');
+                        const motifAtas = document.querySelector('.js-hero-motif-atas');
+                        const motifBawah = document.querySelector('.js-hero-motif-bawah');
+
+                        // Gold motifs move OUT of the screen (Left goes left, Right goes right)
+                        // At progress 1, they should move enough to disappear (e.g., -50vw and 50vw)
+                        if (goldLeft) goldLeft.style.transform = `translateX(${-progress * 50}vw)`;
+                        if (goldRight) goldRight.style.transform = `translateX(${progress * 50}vw) scaleX(-1)`; // Keep the scaleX(-1)
+
+                        // Sequential text fade-out on scroll
+                        const texts = document.querySelectorAll('.js-hero-text');
+                        if (texts.length > 0) {
+                            texts.forEach((el, index) => {
+                                // Split the scroll progress into stages for each text element
+                                // Multiply by 0.4 so the whole sequence finishes very fast (by 40% of the scroll)
+                                const step = 0.4 / texts.length;
+                                const start = index * step;
+                                const end = start + step;
+                                
+                                let opacity = 1;
+                                if (progress > start) {
+                                    if (progress >= end) {
+                                        opacity = 0;
+                                    } else {
+                                        opacity = 1 - ((progress - start) / step);
+                                    }
+                                }
+                                el.style.opacity = opacity;
+                                el.style.transform = `translateY(${-(1 - opacity) * 15}px)`;
+                            });
+                        }
+
+                        // Bersama photo shrinks down faster and moves downwards
+                        // Set transform-origin to bottom so it stays grounded with the motif
+                        if (photo) {
+                            photo.style.transformOrigin = 'bottom center';
+                            photo.style.transform = `translateY(${progress * 15}vh) scale(${Math.max(0, 1 - (progress * 1.5))})`;
+                        }
+
+                        // Black motifs move IN to act like a closing curtain
+                        // motifAtas should stick to the top of the viewport until it touches motifBawah
+                        if (motifAtas && motifBawah) {
+                            const topHeight = motifAtas.offsetHeight;
+                            const bottomHeight = motifBawah.offsetHeight;
+                            // The maximum distance motifAtas can travel down before it touches motifBawah
+                            const maxTranslate = heroRect.height - topHeight - bottomHeight;
+                            
+                            let translateAtas = Math.abs(heroRect.top);
+                            if (translateAtas > maxTranslate) {
+                                translateAtas = maxTranslate; // Cap the movement so they stick together
+                            }
+                            motifAtas.style.transform = `translateY(${translateAtas}px)`;
+                            motifBawah.style.transform = `translateY(0)`; // Let it scroll up naturally with the section
+                        }
+                    } else if (heroRect.top > 0) {
+                        // Reset everything if scrolled back above (rare, but safe)
+                        const goldLeft = document.querySelector('.js-hero-gold-left');
+                        const goldRight = document.querySelector('.js-hero-gold-right');
+                        const photo = document.querySelector('.js-hero-photo');
+                        const motifAtas = document.querySelector('.js-hero-motif-atas');
+                        const motifBawah = document.querySelector('.js-hero-motif-bawah');
+                        const texts = document.querySelectorAll('.js-hero-text');
+
+                        if (goldLeft) goldLeft.style.transform = `translateX(0)`;
+                        if (goldRight) goldRight.style.transform = `translateX(0) scaleX(-1)`;
+                        if (photo) photo.style.transform = `scale(1)`;
+                        if (motifAtas) motifAtas.style.transform = `translateY(0)`;
+                        if (motifBawah) motifBawah.style.transform = `translateY(0)`;
+                        if (texts.length > 0) {
+                            texts.forEach(el => {
+                                el.style.opacity = 1;
+                                el.style.transform = `translateY(0)`;
+                            });
+                        }
+                    }
+                }
+                // ------------------------------------
                 ticking = false;
             });
             ticking = true;
@@ -44,34 +137,32 @@ document.addEventListener('DOMContentLoaded', () => {
         p.className = type === 'firefly' ? 'firefly' : 'falling-leaf';
         p.style.left = Math.random() * 100 + 'vw';
         
-        const duration = type === 'firefly' ? (6 + Math.random() * 6) : (10 + Math.random() * 8);
-        
         if (type === 'firefly') {
-            p.style.animationDuration = `${duration}s, 2s`;
-        } else {
-            p.style.animationDuration = `${duration}s`;
-        }
-        p.style.animationDelay = Math.random() * 8 + 's';
-        
-        if (type === 'firefly') {
-            const size = 3 + Math.random() * 5;
+            p.style.top = Math.random() * 100 + 'vh';
+            p.style.animationDelay = `-${Math.random() * 4}s`;
+            
+            const size = 3 + Math.random() * 4;
             p.style.width = size + 'px';
             p.style.height = size + 'px';
+        } else {
+            p.style.top = '-50px';
+            const duration = 10 + Math.random() * 8;
+            p.style.animationDuration = `${duration}s`;
+            p.style.animationDelay = `-${Math.random() * duration}s`;
+            
+            p.addEventListener('animationiteration', () => {
+                p.style.left = Math.random() * 100 + 'vw';
+            });
         }
         
         particlesContainer.appendChild(p);
-
-        setTimeout(() => {
-            p.remove();
-            createParticle(type);
-        }, (duration + 5) * 1000);
     }
 
     // Generate initial particles
-    for(let i=0; i<15; i++) {
+    for(let i=0; i<20; i++) {
         createParticle('firefly');
     }
-    for(let i=0; i<10; i++) {
+    for(let i=0; i<15; i++) {
         createParticle('falling-leaf');
     }
 
@@ -113,15 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(vignette);
     document.body.appendChild(warmOverlay);
 
-    /* 6. DANCING BARS FOR MUSIC BUTTON (Fixed ID selector) */
-    const musicBtn = document.getElementById('musicToggle');
-    if (musicBtn) {
-        const dancingBars = document.createElement('div');
-        dancingBars.className = 'dancing-bars';
-        dancingBars.innerHTML = '<div class="bar"></div><div class="bar"></div><div class="bar"></div>';
-        musicBtn.appendChild(dancingBars);
-        // The button state is handled by script.js 'playing' class toggle
-    }
 
     /* 7. CONFETTI EFFECT */
     window.burstConfetti = function() {

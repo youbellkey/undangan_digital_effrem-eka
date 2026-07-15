@@ -64,33 +64,64 @@
         <!-- ===== 1. HERO COVER ===== -->
         <section class="parallax-group js-parallax-container overflow-hidden" aria-label="Sampul undangan">
             <!-- Background Asli Parallax -->
-            <div class="js-parallax-layer w-full h-full z-0" data-speed="0.2">
-                <img src="assets/1-original.webp" alt="" class="img-safe-crop transform scale-[1.15]" aria-hidden="true">
+            <div class="js-parallax-layer absolute w-full h-[130%] -top-[15%] z-0" data-speed="-0.4">
+                <img src="assets/1-original.webp" alt="" class="img-safe-crop hero-bg-zoom w-full h-full object-cover" aria-hidden="true">
             </div>
             <!-- Menggelapkan overlay agar teks emas/putih lebih kontras -->
             <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#050506]/95 z-0"></div>
             
-            <!-- Ornamen Bingkai Atas -->
-            <div class="js-parallax-layer w-full h-full pointer-events-none z-0 flex justify-center" data-speed="0.1">
-                <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="absolute top-0 w-full max-w-xl object-contain opacity-90 transform rotate-180" aria-hidden="true">
-            </div>
+            <!-- Ornamen & Foto Tengah (Section 1) -->
+            <div class="js-parallax-layer absolute inset-0 pointer-events-none z-0" data-speed="-0.2">
+                <div class="w-full h-full flex items-center justify-between px-2 md:px-6">
+                    <!-- Bingkai Kiri -->
+                    <div class="animate-float-slow shrink-0 z-10 relative mt-12 -mb-12 md:mt-16 md:-mb-16">
+                        <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="w-[25vw] max-w-[180px] opacity-75 js-hero-gold-left" aria-hidden="true">
+                    </div>
+                    
+                    <!-- Latar Belakang: Motif Hitam & Foto Bersama -->
+                    <div class="absolute inset-0 flex flex-col justify-between z-0 pointer-events-none">
+                        <!-- Motif Atas (dipindah ke layer z-30) -->
+                        <!-- Foto Bersama Tengah -->
+                        <div class="flex-grow flex items-end justify-center min-h-0 relative z-10">
+                            <img src="assets/prewedding/Bersama.png" alt="" class="w-full h-full object-contain js-hero-photo relative z-10" aria-hidden="true" style="object-position: center bottom;">
+                        </div>
 
-            <div class="parallax-layer layer-base flex flex-col items-center justify-center text-center px-4 w-full h-full relative z-10 overflow-hidden" style="padding-top: max(var(--space-24), env(safe-area-inset-top));">
-                <i class="fas fa-cross text-5xl text-[#EBB55F] mb-6 text-shadow-glow reveal-zoom" aria-hidden="true"></i>
-                <p class="text-gray-100 tracking-[0.3em] uppercase mb-4 text-sm md:text-lg font-bold text-shadow-lg reveal delay-100">The Holy Matrimony Of</p>
-                <h1 class="hero-name text-[#EBB55F] font-extrabold text-shadow-lg reveal-slide-left delay-200">Effrem</h1>
-                <p class="hero-ampersand text-white font-script text-shadow-lg reveal-zoom delay-300" aria-hidden="true">&amp;</p>
-                <h1 class="hero-name text-[#EBB55F] font-extrabold mb-8 text-shadow-lg reveal-slide-right delay-400">Eka</h1>
+                        <!-- Motif Bawah -->
+                        <img src="assets/MOTIF%20HITAM%20BAWAH.png" alt="" class="w-full shrink-0 hero-slide-up js-hero-motif-bawah relative z-20" aria-hidden="true">
+                    </div>
 
-                <div class="flex items-center justify-center gap-4 text-[#4A0A0A] text-xl font-bold bg-[#EBB55F] px-6 py-3 rounded-full shadow-lg border-2 border-white reveal-flip delay-500">
-                    <span>25 . 07 . 2026</span>
+                    <!-- Bingkai Kanan -->
+                    <div class="animate-float-slow-delayed shrink-0 z-10 relative mt-12 -mb-12 md:mt-16 md:-mb-16">
+                        <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="w-[25vw] max-w-[180px] opacity-75 transform -scale-x-100 js-hero-gold-right" aria-hidden="true">
+                    </div>
                 </div>
             </div>
 
-            <!-- Ornamen Bingkai Bawah -->
-            <div class="js-parallax-layer w-full h-full pointer-events-none z-0 flex justify-center" data-speed="0.1">
-                <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="absolute bottom-0 w-full max-w-xl object-contain opacity-90" aria-hidden="true">
+            <div class="parallax-layer js-parallax-layer layer-base flex flex-col items-center justify-center text-center px-4 pb-0 md:pb-8 w-full h-full z-10 overflow-hidden absolute inset-0" data-speed="0.2">
+                <!-- Wrapper untuk shift naik 25px tanpa mengubah ukuran total layout flex -->
+                <div class="flex flex-col items-center w-full transform -translate-y-[25px] hero-fade-in-up">
+                    <i class="fas fa-cross text-5xl text-[#EBB55F] mb-6 text-shadow-glow animate-pulse-glow js-hero-text" aria-hidden="true"></i>
+                    <p class="text-gray-100 tracking-[0.3em] pl-[0.3em] uppercase mb-4 text-sm md:text-lg font-bold text-shadow-lg js-hero-text">The Holy Matrimony Of</p>
+                </div>
+                
+                <!-- Wrapper untuk shift turun tanpa mengubah ukuran total layout flex -->
+                <div class="flex flex-col items-center w-full mt-4 -mb-4 md:mt-6 md:-mb-6 hero-fade-in-up" style="animation-delay: 0.2s;">
+                    <h1 class="hero-name mt-16 md:mt-20 text-[#EBB55F] font-extrabold text-shadow-lg js-hero-text" style="font-size: clamp(2.5rem, 6vw, 5rem);">Effrem</h1>
+                    <p class="hero-ampersand text-white font-script text-shadow-lg js-hero-text" aria-hidden="true">&amp;</p>
+                    <h1 class="hero-name text-[#EBB55F] font-extrabold mb-8 text-shadow-lg js-hero-text" style="font-size: clamp(2.5rem, 6vw, 5rem);">Eka</h1>
+
+                    <div class="flex items-center justify-center gap-4 text-[#4A0A0A] text-xl font-bold bg-[#EBB55F] px-6 py-3 rounded-full shadow-lg border-2 border-white js-hero-text">
+                        <span>25 . 07 . 2026</span>
+                    </div>
+                </div>
             </div>
+
+            <!-- Motif Hitam Atas (Z-30 agar di depan tulisan) -->
+            <div class="absolute inset-x-0 top-0 z-30 pointer-events-none flex justify-center">
+                <img src="assets/MOTIF%20HITAM%20ATAS.png" alt="" class="w-full shrink-0 hero-slide-down js-hero-motif-atas" aria-hidden="true">
+            </div>
+
+            <!-- Bingkai Kanan sudah digabung ke atas -->
             
             <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center bg-black/60 px-5 py-3 rounded-full z-20 shadow-xl border border-white/20 animate-float-scroll backdrop-blur-sm" style="margin-bottom: env(safe-area-inset-bottom);">
                 <span class="text-xs mb-1 tracking-[0.2em] uppercase font-bold text-shadow">Gulir ke bawah</span>
@@ -100,18 +131,19 @@
 
         <!-- ===== 2. AYAT KITAB SUCI & PROFIL MEMPELAI ===== -->
         <section class="parallax-content-group js-parallax-container overflow-hidden" aria-label="Ayat dan profil mempelai">
-            <div class="js-parallax-layer w-full h-full z-0" data-speed="0.2">
+            <div class="js-parallax-layer absolute w-full h-[130%] -top-[15%] z-0" data-speed="-0.4">
                 <img src="assets/2.webp" alt="" class="absolute inset-0 w-full h-full object-cover transform scale-[1.1] opacity-40" aria-hidden="true">
             </div>
             <div class="absolute inset-0 bg-gradient-to-b from-[#2A0808]/80 to-[#0A0202]/95 z-0"></div>
 
             <div class="c-container c-container--lg relative z-10 mx-auto px-6">
+                <div class="c-divider reveal"><span></span><i class="fas fa-dove" aria-hidden="true"></i><span></span></div>
                 <!-- Teks Ayat/Kutipan -->
                 <div class="c-glass-panel p-8 md:p-12 mb-20 text-center mx-auto max-w-2xl px-4 z-10">
-                    <p class="italic-quote js-typewriter min-h-[120px]">
+                    <p class="italic-quote js-typewriter min-h-[140px] md:min-h-[100px]" style="font-size: clamp(1rem, 4vw, 1.25rem); line-height: 1.6;">
                         "Demikianlah mereka bukan lagi dua, melainkan satu. Karena itu, apa yang telah dipersatukan Allah, tidak boleh diceraikan manusia."
                     </p>
-                    <p class="font-bold text-[#A12020] tracking-widest uppercase text-sm reveal mt-4">Matius 19:6</p>
+                    <p class="font-bold text-[#A12020] tracking-widest uppercase text-sm reveal mt-2">Matius 19:6</p>
                 </div>
 
                 <div class="c-divider reveal"><span></span><i class="fab fa-pagelines" aria-hidden="true"></i><span></span></div>
@@ -126,11 +158,11 @@
                             <img src="assets/prewedding/memperlai pria.jpg" alt="Foto mempelai pria" class="w-full h-full object-cover object-top rounded-full" loading="lazy" decoding="async">
                         </div>
                         <h2 class="text-4xl text-[#D32F2F] font-bold mb-2 font-serif">Effrem Panesidi, A.Md.Gz</h2>
-                        <p class="text-sm text-gray-600 mb-1">Putra dari Keluarga</p>
+                        <p class="text-sm text-gray-600 mb-1">Anak Keenam dari</p>
                         <p class="font-bold text-gray-800">Bpk. Lambertus (Alm) &amp; Ibu Elisabet</p>
                     </div>
 
-                    <p class="text-7xl text-[#FFC107] font-script md:mt-0 mt-4 reveal" aria-hidden="true">&amp;</p>
+                    <p class="text-7xl text-white drop-shadow-md font-script md:mt-0 mt-4 reveal" aria-hidden="true">&amp;</p>
 
                     <!-- Mempelai Wanita -->
                     <div class="text-center reveal flex-1">
@@ -138,7 +170,7 @@
                             <img src="assets/prewedding/mempelai wanita.jpg" alt="Foto mempelai wanita" class="w-full h-full object-cover object-top rounded-full" loading="lazy" decoding="async">
                         </div>
                         <h2 class="text-4xl text-[#D32F2F] font-bold mb-2 font-serif">Konstansia Eka, S.M</h2>
-                        <p class="text-sm text-gray-600 mb-1">Putri dari Keluarga</p>
+                        <p class="text-sm text-gray-600 mb-1">Anak Kedua dari</p>
                         <p class="font-bold text-gray-800">Bpk. Simon Tete &amp; Ibu Petronela Suriati</p>
                     </div>
                 </div>
@@ -147,13 +179,14 @@
         </section>
 
         <!-- ===== 3. LOVE STORY, GALERI & VIDEO ===== -->
-        <section class="parallax-content-group px-6 border-t-8 border-double border-[#D32F2F] relative js-parallax-container overflow-hidden" aria-label="Kisah cinta dan galeri">
-            <div class="js-parallax-layer w-full h-full z-0" data-speed="0.2">
+        <section class="parallax-content-group px-6 relative js-parallax-container overflow-hidden" aria-label="Kisah cinta dan galeri">
+            <div class="js-parallax-layer absolute w-full h-[130%] -top-[15%] z-0" data-speed="-0.4">
                 <img src="assets/2.webp" alt="" class="absolute inset-0 w-full h-full object-cover transform scale-[1.1] opacity-30" aria-hidden="true">
             </div>
             <div class="absolute inset-0 bg-gradient-to-b from-[#0A0202]/95 to-[#1A0505]/90 z-0"></div>
 
             <div class="c-container c-container--xl relative z-10 mx-auto">
+                <div class="c-divider reveal"><span></span><i class="fas fa-heart" aria-hidden="true"></i><span></span></div>
                 <div class="c-glass-panel p-6 md:p-8 text-center mb-16 reveal max-w-3xl mx-auto">
                     <h2 class="text-4xl md:text-5xl text-[#D32F2F] font-bold mb-4 font-serif">Kisah Cinta &amp; Momen Kami</h2>
                     <p class="text-gray-600 italic-quote text-lg">&ldquo;Segala sesuatu indah pada waktunya.&rdquo;</p>
@@ -184,6 +217,7 @@
 
                     <!-- Galeri -->
                     <div class="lg:w-2/3 reveal">
+                        <div class="c-divider reveal !mt-0 mb-8"><span></span><i class="fas fa-images" aria-hidden="true"></i><span></span></div>
                         <div class="premium-slider" id="gallerySlider">
                             <div class="slider-wrapper" id="sliderWrapper">
                                 <div class="slider-slide active">
@@ -222,13 +256,14 @@
 
         <!-- ===== 4. COUNTDOWN & DETAIL ACARA ===== -->
         <section class="parallax-content-group js-parallax-container overflow-hidden" aria-label="Hitung mundur dan detail acara">
-            <div class="js-parallax-layer w-full h-full z-0" data-speed="0.25">
+            <div class="js-parallax-layer absolute w-full h-[130%] -top-[15%] z-0" data-speed="-0.4">
                 <img src="assets/3-original.webp" alt="" class="absolute inset-0 w-full h-full object-cover transform scale-[1.1] opacity-40" aria-hidden="true">
             </div>
             <div class="absolute inset-0 bg-gradient-to-b from-[#1A0505]/90 via-[#0A0202]/80 to-[#1A0505]/95 z-0"></div>
 
             <div class="w-full px-4 flex flex-col items-center justify-center relative z-10 c-container c-container--lg mx-auto">
 
+                <div class="c-divider reveal"><span></span><i class="fas fa-calendar-alt" aria-hidden="true"></i><span></span></div>
                 <div class="c-glass-panel p-6 md:p-8 w-full max-w-2xl text-center mb-12 border-4 border-[#FFC107] reveal">
                     <h3 class="text-3xl text-[#D32F2F] font-bold mb-6 font-serif">Menuju Hari Bahagia</h3>
                     <div id="countdown-timer" aria-live="off" class="c-countdown">
@@ -251,6 +286,7 @@
                     </div>
                 </div>
 
+                <div class="c-divider reveal"><span></span><i class="fas fa-map-marked-alt" aria-hidden="true"></i><span></span></div>
                 <div class="flex flex-col lg:flex-row gap-8 w-full max-w-5xl justify-center z-10">
 
                     <!-- Misa & Sakramen -->
@@ -263,9 +299,11 @@
                         <p class="text-gray-800 font-bold text-lg mb-1">Gereja Katolik Paroki Santo Petrus &amp; Paulus, Menjalin</p>
                         <p class="text-sm text-gray-600 mb-6">Jl. Anjungan - Bengkayang, Raba, Kec. Menjalin, Kabupaten Landak, Kalimantan Barat 79362</p>
 
-                        <a href="https://maps.app.goo.gl/Y7hh1kwCi2oeAiEA9" target="_blank" rel="noopener" class="c-btn c-btn--outline-red mb-6 reveal delay-200">
-                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Buka Peta Lokasi
-                        </a>
+                        <div class="w-full mb-6">
+                            <a href="https://maps.app.goo.gl/Y7hh1kwCi2oeAiEA9" target="_blank" rel="noopener" class="c-btn c-btn--outline-red reveal delay-200">
+                                <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Buka Peta Lokasi
+                            </a>
+                        </div>
                         
                         <div class="mt-2 bg-white p-2 rounded-xl shadow-inner inline-block mx-auto mb-4 reveal-zoom delay-300">
                             <p class="text-xs text-gray-500 mb-2 font-bold uppercase tracking-widest">Scan Lokasi</p>
@@ -288,12 +326,14 @@
                         <div class="h-1 w-20 bg-white mx-auto mb-4 rounded"></div>
                         <p class="font-bold text-xl mb-2 text-white">Sabtu, 25 Juli 2026</p>
                         <p class="bg-[#FFC107] text-[#8B0000] inline-block px-4 py-1 rounded-full text-sm font-bold mb-4"><i class="far fa-clock" aria-hidden="true"></i> 13.00 WIB – selesai</p>
-                        <p class="text-white font-bold text-lg mb-1">Kediaman Keluarga Bpk. Lambertus (Alm)</p>
-                        <p class="text-sm text-gray-300 mb-6">Sungai Banong, Kecamatan Menjalin, Kabupaten Landak, Kalimantan Barat.</p>
+                        <p class="text-white font-bold text-lg mb-1">Kediaman Keluarga Bpk. Lambertus/Ibu Elisabet</p>
+                        <p class="text-sm text-gray-300 mb-6">Dusun Sei Bandung, Desa Menjalin, Kecamatan Menjalin, Kabupaten Landak, Kalimantan Barat</p>
 
-                        <a href="https://maps.app.goo.gl/YwUs74c1o7EznpFd9" target="_blank" rel="noopener" class="c-btn c-btn--outline-yellow mb-6 reveal delay-200">
-                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Buka Peta Lokasi
-                        </a>
+                        <div class="w-full mb-6">
+                            <a href="https://maps.app.goo.gl/YwUs74c1o7EznpFd9" target="_blank" rel="noopener" class="c-btn c-btn--outline-yellow reveal delay-200">
+                                <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Buka Peta Lokasi
+                            </a>
+                        </div>
 
                         <div class="mt-2 bg-white/10 p-2 rounded-xl shadow-inner inline-block mx-auto border border-white/20 mb-4 reveal-zoom delay-300">
                             <p class="text-xs text-gray-300 mb-2 font-bold uppercase tracking-widest">Scan Lokasi</p>
@@ -314,13 +354,14 @@
 
         <!-- ===== 5. RUNDOWN, INFO, RSVP, GIFT, GUESTBOOK ===== -->
         <section class="parallax-content-group px-6 js-parallax-container overflow-hidden" aria-label="Informasi acara, RSVP, dan buku tamu">
-            <div class="js-parallax-layer w-full h-full z-0" data-speed="0.15">
+            <div class="js-parallax-layer absolute w-full h-[130%] -top-[15%] z-0" data-speed="-0.4">
                 <img src="assets/4.webp" alt="" class="absolute inset-0 w-full h-full object-cover transform scale-[1.1] opacity-40" aria-hidden="true">
             </div>
             <div class="absolute inset-0 bg-gradient-to-b from-[#1A0505]/95 to-[#050506]/95 z-0"></div>
             
             <div class="c-container c-container--md mx-auto flex flex-col gap-12 relative z-10 w-full">
 
+                <div class="c-divider reveal"><span></span><i class="fas fa-envelope-open-text" aria-hidden="true"></i><span></span></div>
                 <!-- RSVP, Gift, Guestbook -->
                 <div class="w-full">
                     <!-- RSVP -->
@@ -399,17 +440,20 @@
         <!-- ===== 6. TERIMA KASIH & FOOTER ===== -->
         <section class="parallax-content-group js-parallax-container relative overflow-hidden" aria-label="Penutup dan ucapan terima kasih">
             <!-- Background Asli Parallax -->
-            <div class="js-parallax-layer w-full h-full z-0" data-speed="0.2">
+            <div class="js-parallax-layer absolute w-full h-[130%] -top-[15%] z-0" data-speed="-0.4">
                 <img src="assets/1-original.webp" alt="" class="absolute inset-0 w-full h-full object-cover transform scale-[1.15] opacity-50" aria-hidden="true">
             </div>
             <div class="absolute inset-0 bg-gradient-to-t from-black to-[#050506]/95 z-0"></div>
 
-            <!-- Ornamen Bingkai Atas -->
-            <div class="js-parallax-layer w-full h-full pointer-events-none z-0 flex justify-center" data-speed="0.1">
-                <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="absolute top-0 w-full max-w-xl object-contain opacity-90 transform rotate-180" aria-hidden="true">
+            <!-- Ornamen Bingkai Kiri -->
+            <div class="js-parallax-layer absolute inset-0 pointer-events-none z-0" data-speed="0.1">
+                <div class="absolute left-0 top-0 bottom-0 flex items-center justify-start animate-float-slow pl-2 md:pl-6">
+                    <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="w-[40vw] max-w-[220px] opacity-90" aria-hidden="true">
+                </div>
             </div>
 
             <div class="w-full flex flex-col items-center justify-center text-center text-white px-6 relative z-10 py-20">
+                <div class="c-divider reveal"><span></span><i class="fas fa-praying-hands" aria-hidden="true"></i><span></span></div>
                 <h2 class="text-4xl md:text-6xl text-[#FFC107] font-bold mb-6 font-serif reveal text-outline">Terima Kasih</h2>
                 <p class="text-lg md:text-xl max-w-3xl font-light italic-quote mb-8 px-4 leading-relaxed text-white reveal text-outline">
                     Atas doa restu dan kehadiran Bapak/Ibu/Saudara/i dalam perayaan cinta kami.
@@ -418,16 +462,26 @@
                 </p>
                 <div class="h-px w-32 bg-[#FFC107] mx-auto mb-6 shadow-[0_0_8px_#FFC107]"></div>
                 <p class="font-bold text-xl uppercase tracking-widest text-[#FFC107] mb-2 text-outline">Kami yang berbahagia,</p>
-                <h3 class="hero-name mt-2 mb-16 text-[#FFC107] text-outline" style="font-family: var(--font-script);">Effrem &amp; Eka</h3>
-                <div class="mt-10 flex flex-col items-center">
-                    <p class="text-xs text-white mb-2 text-outline tracking-wider">Designed &amp; Developed by</p>
-                    <img src="assets/Signature Youbellkey.png" alt="Youbellkey Signature" class="h-10 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] brightness-0 invert" loading="lazy" decoding="async">
+                <h3 class="hero-name mt-2 mb-16 text-[#FFC107] text-outline" style="font-size: clamp(1.5rem, 4vw, 3rem);">Effrem &amp; Eka</h3>
+                <div class="mt-32 pt-12 flex flex-col items-center relative w-full border-t border-white/10">
+                    <!-- The Hidden Signature -->
+                    <div id="secret-signature" class="mb-4 transition-all duration-700 ease-out opacity-0 transform translate-y-10 scale-90 pointer-events-none absolute bottom-full pb-6 flex flex-col items-center w-64 -ml-32 left-1/2">
+                        <p class="text-xs text-[#FFC107] mb-2 text-outline tracking-wider" style="text-shadow: 0 0 10px rgba(255,193,7,0.8);">Designed &amp; Developed by</p>
+                        <img src="assets/Signature%20Youbellkey.png" alt="Youbellkey Signature" class="h-10 drop-shadow-[0_2px_6px_rgba(255,193,7,0.8)] brightness-0 invert mx-auto" loading="lazy" decoding="async">
+                    </div>
+                    
+                    <!-- The Secret Button -->
+                    <button id="secret-btn" type="button" class="focus:outline-none hover:scale-110 transition-transform duration-300 z-10" aria-label="Rahasia">
+                        <img src="assets/Bunga%20Terong.PNG" alt="Logo Dayak" class="w-10 h-10 opacity-70 hover:opacity-100 transition-opacity spin-slow filter drop-shadow-[0_0_12px_rgba(255,193,7,0.8)]">
+                    </button>
                 </div>
             </div>
 
-            <!-- Ornamen Bingkai Bawah -->
-            <div class="js-parallax-layer w-full h-full pointer-events-none z-0 flex justify-center" data-speed="0.1">
-                <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="absolute bottom-0 w-full max-w-xl object-contain opacity-90" aria-hidden="true">
+            <!-- Ornamen Bingkai Kanan -->
+            <div class="js-parallax-layer absolute inset-0 pointer-events-none z-0" data-speed="0.15">
+                <div class="absolute right-0 top-0 bottom-0 flex items-center justify-end animate-float-slow-delayed pr-2 md:pr-6">
+                    <img src="assets/dayak_motif_gold_1782738503580.png" alt="" class="w-[40vw] max-w-[220px] opacity-90 transform -scale-x-100" aria-hidden="true">
+                </div>
             </div>
         </section>
 

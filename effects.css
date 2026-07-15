@@ -59,6 +59,16 @@
 }
 @keyframes fade-in { to { opacity: 1; } }
 
+/* HERO SEQUENTIAL FADE-IN */
+@keyframes fade-in-sequence {
+  0% { opacity: 0; transform: translateY(15px); filter: blur(2px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.seq-fade-in {
+  opacity: 0;
+  animation: fade-in-sequence 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
 /* 2. DIGITAL ENVELOPE (Welcome Screen) */
 #welcome-overlay {
   position: fixed;
@@ -109,31 +119,33 @@
 
 /* 6. FIREFLIES & FALLING LEAVES (Particles) */
 #particles-container {
-  position: fixed; inset: 0; pointer-events: none; z-index: var(--z-particles); overflow: hidden;
+  position: fixed; inset: 0; pointer-events: none; z-index: 15; overflow: hidden;
 }
 .firefly {
   position: absolute; background: var(--dayak-yellow); border-radius: var(--radius-circle);
-  box-shadow: 0 0 8px 2px var(--dayak-yellow); opacity: 0;
-  animation: float-up linear infinite, glow 2s ease-in-out infinite alternate;
+  box-shadow: 0 0 8px 2px var(--dayak-yellow);
+  animation: glow 3s ease-in-out infinite alternate;
+  z-index: 1;
 }
 .falling-leaf {
   position: absolute; width: 12px; height: 18px; background: var(--dayak-red);
   border-radius: 10px 0 10px 0; opacity: 0.7;
   animation: fall-down linear infinite;
   box-shadow: inset 2px 2px 4px rgba(255,255,255,0.3);
+  z-index: 2;
 }
 @keyframes float-up {
-  0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
   10% { opacity: 1; }
   90% { opacity: 1; }
-  100% { transform: translateY(-100px) translateX(50px); opacity: 0; }
+  100% { transform: translateY(var(--move-y, -120vh)) translateX(50px); opacity: 0; }
 }
 @keyframes glow { from { opacity: 0.4; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
 @keyframes fall-down {
-  0% { transform: translateY(-100px) rotate(0deg) translateX(0); opacity: 0; }
+  0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
   10% { opacity: 0.8; }
   90% { opacity: 0.8; }
-  100% { transform: translateY(100vh) rotate(360deg) translateX(-100px); opacity: 0; }
+  100% { transform: translateY(var(--move-y, 120vh)) rotate(360deg) translateX(-100px); opacity: 0; }
 }
 
 /* 7. DANCING BARS (Music Visualizer) */
@@ -153,6 +165,18 @@
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 @keyframes spin-slow { 100% { transform: rotate(360deg); } }
 .animate-float { animation: float 4s ease-in-out infinite; }
+
+@keyframes float-slow-vertical {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+}
+.animate-float-slow {
+  animation: float-slow-vertical 8s ease-in-out infinite;
+}
+.animate-float-slow-delayed {
+  animation: float-slow-vertical 9s ease-in-out infinite;
+  animation-delay: -4s;
+}
 
 /* 8. SWAYING ORNAMENTS & DEPTH OF FIELD */
 .sway { transform-origin: top center; animation: swaying 6s ease-in-out infinite alternate; }
@@ -290,4 +314,92 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-float, .music-btn, .music-btn.playing i { animation: none !important; }
   .reveal, .reveal-3d, .reveal-zoom, .reveal-slide-left, .reveal-slide-right, .reveal-flip { opacity: 1; transform: none; transition: none; }
+}
+
+/* =========================================
+   CINEMATIC HERO ENTRANCE (IDEA 2 & 5)
+========================================= */
+
+/* Continuous Glow for Cross */
+@keyframes pulse-glow-vibrant {
+  0% { 
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 0 10px rgba(211, 47, 47, 0.3); 
+    transform: scale(1);
+  }
+  50% { 
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 30px rgba(255, 215, 0, 0.8), 0 0 40px rgba(211, 47, 47, 0.6); 
+    transform: scale(1.15);
+  }
+  100% { 
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 0 10px rgba(211, 47, 47, 0.3); 
+    transform: scale(1);
+  }
+}
+.animate-pulse-glow {
+  animation: pulse-glow-vibrant 4s infinite ease-in-out;
+  color: #FFF2D6; /* Bright pale gold base */
+}
+
+/* Background Zoom Out */
+.hero-bg-zoom {
+  scale: 1.15;
+  transition: scale 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body.is-opened .hero-bg-zoom {
+  scale: 1;
+}
+
+/* Motif Slide In */
+.hero-slide-down {
+  translate: 0 -80px;
+  opacity: 0;
+  transition: translate 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s, opacity 2s ease 0.5s;
+}
+body.is-opened .hero-slide-down {
+  translate: 0 0;
+  opacity: 1;
+}
+
+.hero-slide-up {
+  translate: 0 80px;
+  opacity: 0;
+  transition: translate 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s, opacity 2s ease 0.5s;
+}
+body.is-opened .hero-slide-up {
+  translate: 0 0;
+  opacity: 1;
+}
+
+/* Text Fade In Up */
+.hero-fade-in-up {
+  translate: 0 40px;
+  opacity: 0;
+  transition: translate 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s, opacity 2s ease 0.8s;
+}
+body.is-opened .hero-fade-in-up {
+  translate: 0 0;
+  opacity: 1;
+}
+
+/* ==========================================================================
+   EASTER EGG (SIGNATURE REVEAL)
+   ========================================================================== */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin-slow {
+  animation: spin-slow 6s linear infinite;
+}
+
+#secret-signature.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+#secret-btn.clicked img {
+  animation: none;
+  transform: scale(0.9);
+  opacity: 1;
+  filter: drop-shadow(0 0 20px rgba(255, 193, 7, 1));
 }

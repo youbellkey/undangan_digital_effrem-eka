@@ -64,6 +64,7 @@
     } else {
         document.body.style.overflow = 'auto';
     }
+    document.body.classList.add('is-opened');
     
     if (typeof window.burstConfetti === 'function') {
         setTimeout(window.burstConfetti, 1000);
@@ -451,6 +452,16 @@
           if (touchStartX - touchEndX > 50) nextSlide();
           if (touchEndX - touchStartX > 50) prevSlide();
       }, {passive: true});
+  }
+
+  /* ---------------- EASTER EGG (SIGNATURE) ---------------- */
+  const secretBtn = document.getElementById('secret-btn');
+  const secretSignature = document.getElementById('secret-signature');
+  if (secretBtn && secretSignature) {
+      secretBtn.addEventListener('click', () => {
+          secretSignature.classList.toggle('revealed');
+          secretBtn.classList.toggle('clicked');
+      });
   }
 
 })();
