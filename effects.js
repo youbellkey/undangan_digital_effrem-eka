@@ -204,57 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 600);
     });
 
-    /* 4. GYROSCOPE TILT PARALLAX (iOS 13+ Safari & Chrome Compliant) */
-    const gyroElements = document.querySelectorAll('.gyro-element');
-    
-    if (gyroElements.length > 0) {
-        let gyroInitialized = false;
-
-        function initGyroscope() {
-            if (gyroInitialized) return;
-            gyroInitialized = true;
-
-            window.addEventListener('deviceorientation', (e) => {
-                const beta = Math.max(-45, Math.min(45, e.beta || 0)); 
-                const gamma = Math.max(-45, Math.min(45, e.gamma || 0));
-                
-                const xOffset = gamma * 0.5; 
-                const yOffset = beta * 0.5;
-                
-                gyroElements.forEach(el => {
-                    const depth = el.getAttribute('data-depth') || 1;
-                    el.style.transform = `translate3d(${xOffset * depth}px, ${yOffset * depth}px, 0)`;
-                });
-            });
-        }
-
-        // iOS requires explicit user interaction to grant sensor permissions
-        function requestGyroPermission() {
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            initGyroscope();
-                        }
-                    })
-                    .catch(error => {
-                        console.warn("Gyroscope permission denied or errored:", error);
-                    });
-            } else {
-                // Non-iOS or Android browsers
-                initGyroscope();
-            }
-        }
-
-        // Bind permission request to the "Buka Undangan" envelope button or general page interaction
-        const openEnvelopeBtn = document.querySelector('button[onclick="openInvitation()"]');
-        if (openEnvelopeBtn) {
-            openEnvelopeBtn.addEventListener('click', requestGyroPermission, { once: true });
-        }
-        
-        // Fallback for general touch trigger
-        document.addEventListener('click', requestGyroPermission, { once: true });
-    }
 
     /* 5. VIGNETTE & WARM OVERLAY */
     const vignette = document.createElement('div');
