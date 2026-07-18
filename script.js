@@ -18,6 +18,40 @@
   });
 
   // Tombol Buka Undangan sekarang menggunakan onclick="openInvitation()" dari HTML
+  
+  /* ---------------- DESKTOP WARNING ---------------- */
+  function checkDesktopWarning() {
+    if (sessionStorage.getItem('desktopWarningDismissed')) return;
+
+    const isDesktopPointer = window.matchMedia("(pointer: fine) and (hover: hover)").matches;
+    const isWideScreen = window.innerWidth > 768;
+    const ua = navigator.userAgent.toLowerCase();
+    
+    let isDesktop = false;
+    if (isDesktopPointer && isWideScreen) {
+        isDesktop = true;
+    } else if (ua.indexOf('windows') !== -1 || ua.indexOf('macintosh') !== -1 || ua.indexOf('linux') !== -1) {
+        if (ua.indexOf('mobile') === -1 && ua.indexOf('android') === -1 && ua.indexOf('ipad') === -1) {
+            isDesktop = true;
+        }
+    }
+
+    if (isDesktop) {
+        const modal = document.getElementById('desktop-warning-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            document.getElementById('btn-continue-desktop')?.addEventListener('click', () => {
+                sessionStorage.setItem('desktopWarningDismissed', 'true');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+        }
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', checkDesktopWarning);
 
   /* ---------------- MUSIC LOGIC ---------------- */
   const audio = document.getElementById('bgMusic');
@@ -215,6 +249,25 @@
     return true;
   }
 
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* ---------------- API CONFIG & LOCAL STORAGE ---------------- */
+  const API_URL = "https://script.google.com/macros/s/AKfycbycb-LN1YtyFYWdBoVyozntR_Fzp8kfoX8MqtsoWf8DsJ1rNGVsIwnHJcdMxKtrMSg/exec";
+
+  function getAuthorId() {
+    let id = localStorage.getItem('guest_author_id');
+    if (!id) {
+      id = 'author_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+      localStorage.setItem('guest_author_id', id);
+    }
+    return id;
+  }
+  const myAuthorId = getAuthorId();
+
   /* ---------------- RSVP FORM ---------------- */
   const rsvpForm = document.getElementById('rsvpForm');
   if (rsvpForm) {
@@ -246,42 +299,182 @@
         submitBtn.textContent = 'Mengirim...';
       }
 
-      // Pengiriman via WhatsApp
-      let waMessage = `Halo, saya ${encodeURIComponent(nameValid.value.trim())}. `;
-      waMessage += `Saya ingin konfirmasi bahwa saya *${encodeURIComponent(statusValid.value)}* acara pernikahan Effrem & Eka.`;
+      const countValue = rsvpCount && rsvpCount.value ? parseInt(rsvpCount.value, 10) : 0;
       
-      const countValue = rsvpCount ? parseInt(rsvpCount.value, 10) : 0;
-      if (statusValid.value === 'Hadir' && countValue > 0) {
-        waMessage += ` %0A%0AJumlah kehadiran: ${countValue} orang.`;
-      }
-      
-      const waNumber = "6281234567890"; // Ganti dengan nomor WA asli
-      const waUrl = `https://wa.me/${waNumber}?text=${waMessage}`;
+      const payload = {
+        action: "rsvp",
+        name: rsvpName.value.trim(),
+        status: rsvpStatus.value,
+        count: rsvpStatus.value === 'Hadir' ? countValue : 0
+      };
 
-      setTimeout(() => {
-        window.open(waUrl, '_blank');
-        showToast('Dialihkan ke WhatsApp...');
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        showToast('Konfirmasi kehadiran berhasil dikirim!');
         rsvpForm.reset();
+      })
+      .catch(error => {
+        showToast('Terjadi kesalahan. Silakan coba lagi.');
+        console.error('Error:', error);
+      })
+      .finally(() => {
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = submitBtn.dataset.originalText;
         }
-      }, 600);
+      });
     });
   }
 
   /* ---------------- GUESTBOOK ---------------- */
   const guestForm = document.getElementById('guestbookForm');
-  if (guestForm) {
+  const box = document.getElementById('comments-box');
+  
+  if (guestForm && box) {
     const guestName = document.getElementById('guestName');
     const guestMessage = document.getElementById('guestMessage');
-    const box = document.getElementById('comments-box');
 
     [guestName, guestMessage].forEach((input) => {
       if (!input) return;
       input.addEventListener('blur', () => validateRequired(input));
     });
+    
+    // Load existing messages
+    function loadMessages() {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          box.innerHTML = ''; // Clear loading text
+          if (data.length === 0) {
+            box.innerHTML = '<div class="text-center text-gray-500 text-sm py-4">Belum ada ucapan. Jadilah yang pertama!</div>';
+            return;
+          }
+          
+          data.forEach(msg => {
+            const isMine = (msg.authorId === myAuthorId);
+            const dateStr = new Date(msg.timestamp).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
+            
+            const newComment = document.createElement('div');
+            newComment.className = `p-4 rounded-xl border-l-4 mb-2 shadow-sm transition-all duration-300 ${isMine ? 'bg-[#FFF9C4] border-[#FFC107]' : 'bg-gray-50 border-[#D32F2F]'}`;
+            newComment.setAttribute('role', 'listitem');
+            newComment.dataset.id = msg.id;
+            
+            let html = `
+              <div class="message-content">
+                <div class="flex justify-between items-start">
+                  <p class="font-bold text-sm text-[#8B0000]">${escapeHtml(msg.name)} <span class="text-xs text-gray-500 font-normal ml-2">${dateStr}</span></p>
+            `;
+            
+            if (isMine) {
+              html += `
+                  <div class="flex gap-2">
+                    <button type="button" class="text-gray-500 hover:text-blue-600 transition edit-btn" aria-label="Edit"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="text-gray-500 hover:text-red-600 transition delete-btn" aria-label="Hapus"><i class="fas fa-trash"></i></button>
+                  </div>
+              `;
+            }
+            
+            html += `</div><p class="text-sm text-gray-700 mt-1 whitespace-pre-wrap">${escapeHtml(msg.message)}</p></div>`;
+            
+            if (isMine) {
+              html += `
+              <div class="edit-form hidden mt-2">
+                <input type="text" class="edit-input-name c-input w-full mb-2 text-sm" value="${escapeHtml(msg.name.replace(/"/g, '&quot;'))}">
+                <textarea class="edit-input-message c-input c-input--textarea w-full mb-2 text-sm" rows="2">${escapeHtml(msg.message)}</textarea>
+                <div class="flex justify-end gap-2">
+                  <button type="button" class="px-3 py-1 text-xs text-gray-600 bg-gray-200 rounded hover:bg-gray-300 cancel-edit-btn">Batal</button>
+                  <button type="button" class="px-3 py-1 text-xs text-white bg-[#D32F2F] rounded hover:bg-[#B71C1C] save-edit-btn">Simpan</button>
+                </div>
+              </div>
+              `;
+            }
 
+            newComment.innerHTML = html;
+            
+            if (isMine) {
+              const editBtn = newComment.querySelector('.edit-btn');
+              const deleteBtn = newComment.querySelector('.delete-btn');
+              const messageContent = newComment.querySelector('.message-content');
+              const editForm = newComment.querySelector('.edit-form');
+              const cancelEditBtn = newComment.querySelector('.cancel-edit-btn');
+              const saveEditBtn = newComment.querySelector('.save-edit-btn');
+              const editInputName = newComment.querySelector('.edit-input-name');
+              const editInputMessage = newComment.querySelector('.edit-input-message');
+              
+              editBtn.addEventListener('click', () => {
+                messageContent.classList.add('hidden');
+                editForm.classList.remove('hidden');
+              });
+
+              cancelEditBtn.addEventListener('click', () => {
+                editForm.classList.add('hidden');
+                messageContent.classList.remove('hidden');
+                editInputName.value = msg.name;
+                editInputMessage.value = msg.message;
+              });
+
+              saveEditBtn.addEventListener('click', () => {
+                const newName = editInputName.value.trim();
+                const newMsg = editInputMessage.value.trim();
+
+                if (!newName || !newMsg) {
+                  showToast('Nama dan ucapan tidak boleh kosong!');
+                  return;
+                }
+
+                saveEditBtn.disabled = true;
+                saveEditBtn.textContent = '...';
+
+                fetch(API_URL, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'text/plain' },
+                  body: JSON.stringify({
+                    action: "editMessage",
+                    id: msg.id,
+                    authorId: myAuthorId,
+                    name: newName,
+                    message: newMsg
+                  })
+                })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.success) {
+                    showToast('Ucapan berhasil diperbarui.');
+                    loadMessages();
+                  } else {
+                    showToast('Gagal memperbarui ucapan.');
+                  }
+                })
+                .catch(err => console.error(err))
+                .finally(() => {
+                  saveEditBtn.disabled = false;
+                  saveEditBtn.textContent = 'Simpan';
+                });
+              });
+              
+              deleteBtn.addEventListener('click', () => {
+                deleteMessage(msg.id);
+              });
+            }
+            
+            box.appendChild(newComment);
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          box.innerHTML = '<div class="text-center text-red-500 text-sm py-4">Gagal memuat ucapan.</div>';
+        });
+    }
+    
+    // Initial Load
+    loadMessages();
+
+    // Submit New Message
     guestForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -293,41 +486,72 @@
         firstInvalid.focus();
         return;
       }
-
-      const name = guestName.value.trim();
-      const msg = guestMessage.value.trim();
-
-      const newComment = document.createElement('div');
-      newComment.className = 'bg-white p-4 rounded-xl border-l-4 border-[#FFC107] mb-2 shadow-md transform scale-95 opacity-0 transition-all duration-500 ease-out';
-      newComment.setAttribute('role', 'listitem');
-      newComment.innerHTML =
-        '<p class="font-bold text-sm text-[#8B0000]">' + escapeHtml(name) +
-        ' <span class="text-xs text-gray-400 font-normal ml-2">Baru saja</span></p>' +
-        '<p class="text-sm text-gray-700 mt-1">' + escapeHtml(msg) + '</p>';
-
-      if (box) {
-        box.insertBefore(newComment, box.firstChild);
-        
-        // Trigger reflow & animation
-        requestAnimationFrame(() => {
-            newComment.classList.remove('scale-95', 'opacity-0');
-            newComment.classList.add('scale-100', 'opacity-100');
-        });
-      }
-
-      guestForm.reset();
-      showToast('Ucapan berhasil dikirim. Terima kasih!');
       
-      if (typeof window.burstConfetti === 'function') {
-          window.burstConfetti();
+      const submitBtn = guestForm.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.dataset.originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Mengirim...';
       }
-    });
-  }
 
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+      const payload = {
+        action: "addMessage",
+        authorId: myAuthorId,
+        name: guestName.value.trim(),
+        message: guestMessage.value.trim()
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        showToast('Ucapan berhasil dikirim. Terima kasih!');
+        guestForm.reset();
+        loadMessages(); // reload from sheet
+        if (typeof window.burstConfetti === 'function') window.burstConfetti();
+      })
+      .catch(err => {
+        showToast('Terjadi kesalahan. Silakan coba lagi.');
+        console.error(err);
+      })
+      .finally(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = submitBtn.dataset.originalText;
+        }
+      });
+    });
+    
+    // Globals for inline onclick
+    window.deleteMessage = function(id) {
+      if (!confirm("Yakin ingin menghapus ucapan ini?")) return;
+      
+      showToast('Menghapus ucapan...');
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: "deleteMessage",
+          id: id,
+          authorId: myAuthorId
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Ucapan berhasil dihapus.');
+          loadMessages();
+        } else {
+          showToast('Gagal menghapus ucapan.');
+        }
+      })
+      .catch(err => console.error(err));
+    };
+
+
   }
 
   /* ---------------- LIGHTBOX GALERI ---------------- */
@@ -392,66 +616,389 @@
       img.addEventListener('load', () => img.classList.add('loaded'));
     }
   });
-  /* ---------------- PREMIUM SLIDER ---------------- */
-  const slider = document.getElementById('gallerySlider');
-  if (slider) {
-      const slides = slider.querySelectorAll('.slider-slide');
-      const prevBtn = document.getElementById('sliderPrev');
-      const nextBtn = document.getElementById('sliderNext');
-      const indicatorsContainer = document.getElementById('sliderIndicators');
-      let currentSlide = 0;
-      let slideInterval;
-      const totalSlides = slides.length;
+  /* ---------------- CINEMATIC LUXURY GALLERY ---------------- */
+  const galleryEl = document.getElementById('galleryLuxury');
+  if (galleryEl) {
+    class GalleryController {
+      constructor(container) {
+        this.container = container;
+        this.viewport = container.querySelector('.gallery-viewport');
+        this.slides = Array.from(this.viewport.querySelectorAll('.slide'));
+        this.prevBtn = container.querySelector('#galleryPrev');
+        this.nextBtn = container.querySelector('#galleryNext');
+        this.thumbContainer = container.querySelector('#galleryThumbnails');
+        
+        this.totalSlides = this.slides.length;
+        if (this.totalSlides === 0) return;
 
-      for(let i=0; i<totalSlides; i++) {
+        this.currentIndex = 0;
+        this.state = 'idle'; // idle, preloading, entering, active, exiting, hidden, failed
+        
+        this.intervalTime = 6000;
+        this.autoplayTimer = null;
+        
+        // Modules
+        this.Accessibility = new AccessibilityController(this);
+        this.Preloader = new PreloadManager(this);
+        this.Thumbnails = new ThumbnailController(this);
+        this.Animation = new AnimationController(this);
+        this.Gestures = new GestureController(this);
+
+        this.init();
+      }
+
+      init() {
+        this.Thumbnails.init();
+        this.Gestures.init();
+        this.Accessibility.init();
+
+        // Bind nav buttons
+        if (this.prevBtn) this.prevBtn.addEventListener('click', () => this.navigate(-1));
+        if (this.nextBtn) this.nextBtn.addEventListener('click', () => this.navigate(1));
+
+        // Start autoplay
+        this.startAutoplay();
+        
+        // Proactively preload next slide
+        this.Preloader.preload(this.getNextIndex(1));
+      }
+
+      getNextIndex(dir) {
+        return (this.currentIndex + dir + this.totalSlides) % this.totalSlides;
+      }
+
+      async navigate(dir) {
+        if (this.state === 'entering' || this.state === 'exiting') return; // Transition Lock
+        
+        this.stopAutoplay();
+        const nextIndex = this.getNextIndex(dir);
+        await this.goToSlide(nextIndex, dir);
+        this.startAutoplay();
+      }
+
+      async goToSlide(index, dir = 1) {
+        if (index === this.currentIndex) return;
+        if (this.state === 'entering' || this.state === 'exiting') return;
+
+        this.state = 'preloading';
+        const success = await this.Preloader.preload(index);
+        
+        if (!success) {
+           this.state = 'idle'; 
+           return; 
+        }
+
+        this.state = 'entering';
+        const currentSlide = this.slides[this.currentIndex];
+        const nextSlide = this.slides[index];
+
+        this.Thumbnails.updateActive(index);
+        
+        this.Animation.crossfade(currentSlide, nextSlide, dir, () => {
+          this.state = 'idle';
+          this.currentIndex = index;
+          // Proactively preload the next one
+          this.Preloader.preload(this.getNextIndex(1));
+          // Enforce Memory Budget
+          this.Preloader.maintainMemory(this.currentIndex);
+        });
+      }
+
+      startAutoplay() {
+        if (this.Accessibility.isReducedMotion()) return;
+        this.stopAutoplay();
+        this.autoplayTimer = setInterval(() => {
+          if (!document.hidden && document.visibilityState !== 'hidden') {
+            // Wait if lightbox is open (needs specific implementation logic if present)
+            if (!document.body.classList.contains('lightbox-open')) {
+              this.navigate(1);
+            }
+          }
+        }, this.intervalTime);
+      }
+
+      stopAutoplay() {
+        clearInterval(this.autoplayTimer);
+      }
+
+      destroy() {
+        this.stopAutoplay();
+        this.Gestures.destroy();
+        this.Thumbnails.destroy();
+        this.Accessibility.destroy();
+      }
+    }
+
+    class PreloadManager {
+      constructor(gallery) {
+        this.gallery = gallery;
+        this.cache = new Set();
+        this.cache.add(0); // First slide is pre-rendered in HTML
+      }
+      maintainMemory(currentIndex) {
+        const total = this.gallery.totalSlides;
+        if (total <= 3) return; // No need to garbage collect if very few slides
+        
+        const keep = new Set();
+        keep.add(currentIndex);
+        keep.add((currentIndex + 1) % total);
+        keep.add((currentIndex - 1 + total) % total);
+
+        for (let i = 0; i < total; i++) {
+          if (!keep.has(i) && this.cache.has(i)) {
+            const slide = this.gallery.slides[i];
+            slide.innerHTML = ''; // Destroy DOM elements to free memory
+            this.cache.delete(i);
+          }
+        }
+      }
+      async preload(index) {
+        if (this.cache.has(index)) return true;
+        const slide = this.gallery.slides[index];
+        const src = slide.getAttribute('data-src');
+        const alt = slide.getAttribute('data-alt') || '';
+        if (!src) return true; // Already loaded
+
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.src = src;
+          // Feature detection for decode
+          if (img.decode) {
+             img.decode().then(() => {
+                this.injectDOM(slide, src, alt);
+                this.cache.add(index);
+                resolve(true);
+             }).catch(() => {
+                console.warn('Failed to decode image, falling back:', src);
+                this.injectDOM(slide, src, alt);
+                this.cache.add(index);
+                resolve(true); // Fallback to standard load
+             });
+          } else {
+             img.onload = () => {
+                this.injectDOM(slide, src, alt);
+                this.cache.add(index);
+                resolve(true);
+             };
+             img.onerror = () => {
+                this.injectDOM(slide, src, alt);
+                this.cache.add(index);
+                resolve(true);
+             }
+          }
+        });
+      }
+      injectDOM(slide, src, alt) {
+         slide.innerHTML = `
+           <img src="${src}" alt="" class="slide-bg">
+           <div class="noise-overlay"></div>
+           <div class="gradient-overlay"></div>
+           <img src="${src}" alt="${alt}" class="slide-fg">
+         `;
+         // Retain data-src so it can be re-loaded later if destroyed
+      }
+    }
+
+    class AnimationController {
+      constructor(gallery) {
+        this.gallery = gallery;
+      }
+      crossfade(outSlide, inSlide, dir, onComplete) {
+        this.gallery.state = 'exiting';
+        
+        // Reset any inline transform from parallax
+        outSlide.style.transform = '';
+        inSlide.style.transform = '';
+        const bg = outSlide.querySelector('.slide-bg');
+        if (bg) bg.style.transform = '';
+
+        inSlide.classList.add('active');
+        inSlide.classList.add('incoming');
+        
+        let completed = false;
+        const handleTransitionEnd = (e) => {
+          if (e.target !== inSlide || e.propertyName !== 'opacity') return;
+          finish();
+        };
+
+        const finish = () => {
+          if (completed) return;
+          completed = true;
+          inSlide.removeEventListener('transitionend', handleTransitionEnd);
+          inSlide.classList.remove('incoming');
+          outSlide.classList.remove('active');
+          onComplete();
+        };
+
+        inSlide.addEventListener('transitionend', handleTransitionEnd);
+        
+        // Fallback safety timeout just in case transitionend fails
+        setTimeout(finish, 1600);
+      }
+    }
+
+    class ThumbnailController {
+      constructor(gallery) {
+        this.gallery = gallery;
+        this.thumbs = [];
+        this.ro = null;
+      }
+      init() {
+        this.gallery.slides.forEach((slide, i) => {
+          const src = slide.getAttribute('data-src') || slide.querySelector('img').src;
           const thumb = document.createElement('img');
-          thumb.src = slides[i].querySelector('img').src;
-          thumb.className = 'slider-thumb' + (i===0 ? ' active' : '');
-          thumb.setAttribute('alt', 'Thumbnail ' + (i+1));
-          thumb.addEventListener('click', () => goToSlide(i));
-          indicatorsContainer.appendChild(thumb);
-      }
-      const thumbs = indicatorsContainer.querySelectorAll('.slider-thumb');
-
-      function goToSlide(index) {
-          slides[currentSlide].classList.remove('active');
-          thumbs[currentSlide].classList.remove('active');
-          currentSlide = (index + totalSlides) % totalSlides;
-          slides[currentSlide].classList.add('active');
-          thumbs[currentSlide].classList.add('active');
-          
-          // Auto-scroll thumbnail container to keep active thumb in view
-          const activeThumb = thumbs[currentSlide];
-          indicatorsContainer.scrollTo({
-              left: activeThumb.offsetLeft - (indicatorsContainer.clientWidth / 2) + (activeThumb.clientWidth / 2),
-              behavior: 'smooth'
+          thumb.src = src;
+          thumb.className = 'gallery-thumb' + (i === this.gallery.currentIndex ? ' active' : '');
+          thumb.addEventListener('click', () => {
+            this.gallery.stopAutoplay();
+            this.gallery.goToSlide(i, i > this.gallery.currentIndex ? 1 : -1);
+            this.gallery.startAutoplay();
           });
-          
-          resetInterval();
+          this.gallery.thumbContainer.appendChild(thumb);
+          this.thumbs.push(thumb);
+        });
+
+        if ('ResizeObserver' in window) {
+          this.ro = new ResizeObserver(() => this.centerActive());
+          this.ro.observe(this.gallery.thumbContainer);
+        } else {
+          this.resizeBound = () => this.centerActive();
+          window.addEventListener('resize', this.resizeBound);
+          window.addEventListener('orientationchange', this.resizeBound);
+        }
       }
-
-      function nextSlide() { goToSlide(currentSlide + 1); }
-      function prevSlide() { goToSlide(currentSlide - 1); }
-
-      prevBtn.addEventListener('click', prevSlide);
-      nextBtn.addEventListener('click', nextSlide);
-
-      function resetInterval() {
-          clearInterval(slideInterval);
-          slideInterval = setInterval(nextSlide, 4000);
+      updateActive(index) {
+        this.thumbs.forEach(t => t.classList.remove('active'));
+        this.thumbs[index].classList.add('active');
+        this.centerActive();
       }
-      resetInterval();
+      centerActive() {
+        const activeThumb = this.thumbs[this.gallery.currentIndex];
+        if (!activeThumb) return;
+        
+        const container = this.gallery.thumbContainer;
+        container.scrollTo({
+          left: activeThumb.offsetLeft - (container.clientWidth / 2) + (activeThumb.clientWidth / 2),
+          behavior: 'smooth'
+        });
+      }
+      destroy() {
+        if (this.ro) this.ro.disconnect();
+        if (this.resizeBound) {
+            window.removeEventListener('resize', this.resizeBound);
+            window.removeEventListener('orientationchange', this.resizeBound);
+        }
+      }
+    }
 
-      let touchStartX = 0;
-      let touchEndX = 0;
-      slider.addEventListener('touchstart', e => {
-          touchStartX = e.changedTouches[0].screenX;
-      }, {passive: true});
-      slider.addEventListener('touchend', e => {
-          touchEndX = e.changedTouches[0].screenX;
-          if (touchStartX - touchEndX > 50) nextSlide();
-          if (touchEndX - touchStartX > 50) prevSlide();
-      }, {passive: true});
+    class GestureController {
+      constructor(gallery) {
+        this.gallery = gallery;
+        this.startX = 0;
+        this.currentX = 0;
+        this.isDragging = false;
+        this.rafId = null;
+        this.activeSlide = null;
+        this.activeBg = null;
+      }
+      init() {
+        this.boundTouchStart = this.onTouchStart.bind(this);
+        this.boundTouchMove = this.onTouchMove.bind(this);
+        this.boundTouchEnd = this.onTouchEnd.bind(this);
+
+        this.gallery.viewport.addEventListener('touchstart', this.boundTouchStart, {passive: true});
+        this.gallery.viewport.addEventListener('touchmove', this.boundTouchMove, {passive: false});
+        this.gallery.viewport.addEventListener('touchend', this.boundTouchEnd, {passive: true});
+      }
+      onTouchStart(e) {
+        if (this.gallery.state !== 'idle') return;
+        this.startX = e.touches[0].clientX;
+        this.isDragging = true;
+        this.gallery.stopAutoplay();
+
+        this.activeSlide = this.gallery.slides[this.gallery.currentIndex];
+        this.activeBg = this.activeSlide.querySelector('.slide-bg');
+      }
+      onTouchMove(e) {
+        if (!this.isDragging || this.gallery.state !== 'idle') return;
+        this.currentX = e.touches[0].clientX;
+        const diffX = this.currentX - this.startX;
+        
+        // Resistance mapping (heavy resistance)
+        const resistance = 0.4;
+        const moveX = diffX * resistance;
+
+        if (Math.abs(diffX) > 10) e.preventDefault(); // prevent scroll
+
+        if (this.rafId) cancelAnimationFrame(this.rafId);
+        this.rafId = requestAnimationFrame(() => {
+          if (this.activeSlide) this.activeSlide.style.transform = `translate3d(${moveX}px, 0, 0)`;
+          if (this.activeBg) {
+             // Inertia parallax for bg
+             const bgMove = moveX * 0.1;
+             this.activeBg.style.transform = `scale(var(--bg-scale)) translate3d(${-bgMove}px, 0, 0)`;
+          }
+        });
+      }
+      onTouchEnd() {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+        if (this.rafId) cancelAnimationFrame(this.rafId);
+
+        const diffX = this.currentX - this.startX;
+        
+        // Reset transforms
+        if (this.activeSlide) this.activeSlide.style.transform = '';
+        if (this.activeBg) this.activeBg.style.transform = '';
+
+        this.activeSlide = null;
+        this.activeBg = null;
+
+        if (Math.abs(diffX) > 70) {
+           if (diffX > 0) this.gallery.navigate(-1);
+           else this.gallery.navigate(1);
+        } else {
+           this.gallery.startAutoplay();
+        }
+      }
+      destroy() {
+        this.gallery.viewport.removeEventListener('touchstart', this.boundTouchStart);
+        this.gallery.viewport.removeEventListener('touchmove', this.boundTouchMove);
+        this.gallery.viewport.removeEventListener('touchend', this.boundTouchEnd);
+        if (this.rafId) cancelAnimationFrame(this.rafId);
+      }
+    }
+
+    class AccessibilityController {
+      constructor(gallery) {
+        this.gallery = gallery;
+        this.mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      }
+      init() {
+        this.boundVisibility = this.onVisibilityChange.bind(this);
+        document.addEventListener('visibilitychange', this.boundVisibility);
+        window.addEventListener('pagehide', this.boundVisibility);
+        window.addEventListener('pageshow', this.boundVisibility);
+      }
+      isReducedMotion() {
+        return this.mediaQuery.matches;
+      }
+      onVisibilityChange() {
+        if (document.hidden || document.visibilityState === 'hidden') {
+          this.gallery.stopAutoplay();
+        } else {
+          this.gallery.startAutoplay();
+        }
+      }
+      destroy() {
+        document.removeEventListener('visibilitychange', this.boundVisibility);
+        window.removeEventListener('pagehide', this.boundVisibility);
+        window.removeEventListener('pageshow', this.boundVisibility);
+      }
+    }
+
+    // Initialize the gallery
+    window.luxuryGalleryInstance = new GalleryController(galleryEl);
   }
 
   /* ---------------- EASTER EGG (SIGNATURE) ---------------- */

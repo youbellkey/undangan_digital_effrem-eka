@@ -11,7 +11,7 @@
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    z-index: var(--z-section);
+    z-index: var(--layer-section);
 }
 .js-parallax-layer {
     position: absolute;
@@ -25,7 +25,7 @@
 
 /* 1. PRELOADER */
 #preloader {
-  position: fixed; inset: 0; background: var(--dayak-black); z-index: var(--z-preloader);
+  position: fixed; inset: 0; background: var(--dayak-black); z-index: var(--layer-preloader);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   transition: opacity 1.5s var(--ease-cinematic), visibility 1.5s var(--ease-cinematic);
 }
@@ -74,7 +74,7 @@
   position: fixed;
   inset: 0;
   background-color: var(--dayak-black);
-  z-index: var(--z-header);
+  z-index: var(--layer-header);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,7 +89,7 @@
 /* 3. SCROLL PROGRESS BAR */
 #scroll-progress {
   position: fixed; top: 0; left: 0; height: 4px; background: var(--dayak-yellow);
-  width: 0%; z-index: var(--z-cursor); transition: width 0.1s ease;
+  width: 0%; z-index: 10000; transition: width 0.1s ease;
   box-shadow: 0 0 10px var(--dayak-yellow);
 }
 
@@ -111,7 +111,7 @@
   pointer-events: none; 
   left: 0; top: 0;
   transform: translate3d(calc(var(--tx) - 50%), calc(var(--ty) - 50%), 0) scale(0);
-  animation: ripple-anim 0.6s var(--ease-exit) forwards; z-index: var(--z-cursor);
+  animation: ripple-anim 0.6s var(--ease-exit) forwards; z-index: 10000;
 }
 @keyframes ripple-anim {
   to { transform: translate3d(calc(var(--tx) - 50%), calc(var(--ty) - 50%), 0) scale(3); opacity: 0; }
@@ -123,15 +123,16 @@
 }
 .firefly {
   position: absolute; background: var(--dayak-yellow); border-radius: var(--radius-circle);
-  box-shadow: 0 0 8px 2px var(--dayak-yellow);
-  animation: glow 3s ease-in-out infinite alternate;
+  box-shadow: 0 0 10px 3px rgba(255, 193, 7, 0.6);
+  animation: firefly-glow 4s ease-in-out infinite alternate,
+             firefly-drift 15s ease-in-out infinite;
   z-index: 1;
 }
 .falling-leaf {
-  position: absolute; width: 12px; height: 18px; background: var(--dayak-red);
-  border-radius: 10px 0 10px 0; opacity: 0.7;
+  position: absolute; width: 12px; height: 18px; background: #8C4F2B;
+  border-radius: 10px 0 10px 0; opacity: 0.65;
   animation: fall-down linear infinite;
-  box-shadow: inset 2px 2px 4px rgba(255,255,255,0.3);
+  box-shadow: inset 1px 1px 3px rgba(255,255,255,0.25);
   z-index: 2;
 }
 @keyframes float-up {
@@ -140,7 +141,24 @@
   90% { opacity: 1; }
   100% { transform: translateY(var(--move-y, -120vh)) translateX(50px); opacity: 0; }
 }
-@keyframes glow { from { opacity: 0.4; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
+@keyframes firefly-glow {
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+@keyframes firefly-drift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(var(--x1, 30px), var(--y1, -40px), 0);
+  }
+  50% {
+    transform: translate3d(var(--x2, -25px), var(--y2, -25px), 0);
+  }
+  75% {
+    transform: translate3d(var(--x3, 35px), var(--y3, 30px), 0);
+  }
+}
 @keyframes fall-down {
   0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
   10% { opacity: 0.8; }
@@ -220,7 +238,7 @@
 .delay-600 { transition-delay: 600ms !important; }
 
 /* 11. CONFETTI */
-.confetti { position: fixed; top: -10px; width: 10px; height: 10px; z-index: var(--z-toast); animation: confetti-fall 3s ease-out forwards; pointer-events: none; }
+.confetti { position: fixed; top: -10px; width: 10px; height: 10px; z-index: var(--layer-toast); animation: confetti-fall 3s ease-out forwards; pointer-events: none; }
 @keyframes confetti-fall {
   0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
@@ -240,11 +258,11 @@
 
 /* 13. VIGNETTE & SMOOTH OVERLAY */
 .vignette-overlay {
-  position: fixed; inset: 0; pointer-events: none; z-index: var(--z-overlay);
+  position: fixed; inset: 0; pointer-events: none; z-index: var(--layer-overlay);
   background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.6) 150%);
 }
 .warm-overlay {
-  position: fixed; inset: 0; pointer-events: none; z-index: var(--z-overlay);
+  position: fixed; inset: 0; pointer-events: none; z-index: var(--layer-overlay);
   background: rgba(255, 193, 7, 0.05); mix-blend-mode: overlay;
 }
 
@@ -257,59 +275,211 @@
   max-width: 360px; background: var(--dayak-red); color: var(--dayak-white);
   padding: 14px var(--space-5); border-radius: var(--radius-md); box-shadow: var(--shadow-xl);
   opacity: 0; transform: translateY(20px); transition: opacity var(--motion-md) var(--ease-cinematic), transform var(--motion-md) var(--ease-cinematic);
-  z-index: var(--z-toast); font-weight: 700; display: flex; align-items: center; gap: 10px; pointer-events: none;
+  z-index: var(--layer-toast); font-weight: 700; display: flex; align-items: center; gap: 10px; pointer-events: none;
 }
 #toast.show { opacity: 1; transform: translateY(0); }
-@media (min-width: 480px) { #toast { left: auto; } }
 
-/* 16. PREMIUM SLIDER (Fade & Scale) */
-.premium-slider {
-  position: relative; width: 100%; aspect-ratio: 4/5;
-  overflow: hidden; border-radius: var(--radius-lg);
+/* 16. CINEMATIC LUXURY GALLERY (Apple / Leica Style) */
+.luxury-gallery {
+  /* --- CONFIGURATION VARIABLES --- */
+  --gallery-radius: clamp(18px, 4vw, 24px);
+  --gallery-duration: 1500ms;
+  --gallery-zoom-start: 1.02;
+  --gallery-zoom-end: 1.09;
+  --thumb-size: 60px;
+  --gallery-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --gallery-interval: 6000ms;
+  --bg-blur: 32px;
+  --bg-scale: 1.4;
+  --noise-opacity: 0.012;
+  --thumb-opacity: 0.45;
+  --thumb-active-scale: 1.08;
+  --swipe-threshold: 70px;
+  --parallax-factor: 0.1;
+
+  position: relative;
+  width: 100%;
+  border-radius: var(--gallery-radius);
+  overflow: hidden;
   box-shadow: var(--shadow-xl);
-  border: 4px solid var(--dayak-yellow); 
-  background: linear-gradient(rgba(10, 2, 2, 0.7), rgba(26, 5, 5, 0.9)), url('assets/dayak_bg_dark_1782738492802.png') center/cover;
+  border: 1px solid rgba(255,255,255,0.05); /* very subtle border */
+  background: var(--dayak-black);
+}
+
+.gallery-viewport {
+  position: relative;
+  width: 100%;
+  height: clamp(460px, 62vh, 700px);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   touch-action: pan-y;
+  /* Hardware acceleration & isolation */
+  backface-visibility: hidden;
+  transform: translate3d(0,0,0);
+  contain: layout paint style;
+  padding-bottom: env(safe-area-inset-bottom);
 }
-@media (min-width: 768px) { .premium-slider { aspect-ratio: 4/3; } }
-@media (min-width: 1024px) { .premium-slider { aspect-ratio: 16/9; } }
-.slider-wrapper { position: relative; width: 100%; height: 100%; }
-.slider-slide {
-  position: absolute; inset: 0; opacity: 0;
-  transition: opacity 0.8s var(--ease-cinematic);
-  pointer-events: none; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
+
+@keyframes kenBurns {
+  from { scale: var(--gallery-zoom-start); }
+  to { scale: var(--gallery-zoom-end); }
 }
-.slider-slide.active { opacity: 1; pointer-events: auto; z-index: 2; }
-.slider-slide img {
-  max-width: 100%; max-height: 100%; object-fit: contain; object-position: center;
-  transform: scale(0.8); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-  border-radius: var(--radius-xs);
+
+@keyframes ambientFloat {
+  0% { translate: 0 -1px; }
+  50% { translate: 0 1px; }
+  100% { translate: 0 -1px; }
 }
-.slider-slide.active img { transform: scale(1); }
-.slider-nav {
-  position: absolute; top: 40%; transform: translateY(-50%);
-  background: rgba(0,0,0,0.5); color: var(--dayak-white); border: none;
-  width: 44px; height: 44px; border-radius: var(--radius-circle);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; z-index: 10; transition: background var(--motion-sm), transform var(--motion-sm);
-  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--gallery-duration) var(--gallery-ease), visibility var(--gallery-duration) step-end;
+  z-index: 1;
+  pointer-events: none;
 }
-.slider-nav:hover { background: rgba(255,193,7,0.8); transform: translateY(-50%) scale(1.1); }
-.slider-nav.prev { left: var(--space-3); }
-.slider-nav.next { right: var(--space-3); }
-.slider-indicators {
-  position: absolute; bottom: 15px; left: 0; right: 0;
-  display: flex; gap: var(--space-2); z-index: 10; overflow-x: auto;
-  padding: 0 var(--space-4); scrollbar-width: none;
+
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+  pointer-events: auto;
+  transition: opacity var(--gallery-duration) var(--gallery-ease), visibility 0s step-start;
 }
-.slider-indicators::-webkit-scrollbar { display: none; }
-.slider-thumb {
-  width: 60px; height: 60px; border-radius: var(--radius-sm); flex-shrink: 0;
-  object-fit: cover; cursor: pointer; border: 2px solid rgba(255,255,255,0.4);
-  transition: all var(--motion-sm) var(--ease-cinematic); opacity: 0.6; object-position: center 20%;
+
+.slide.incoming {
+  z-index: 3 !important;
 }
-.slider-thumb.active { border-color: var(--dayak-yellow); opacity: 1; transform: scale(1.1); box-shadow: 0 0 10px rgba(255,193,7,0.8); }
+
+/* Background Blur Layer */
+.slide-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(var(--bg-blur)) brightness(0.48) contrast(1.08) saturate(1.15);
+  transform: scale(var(--bg-scale)) translate3d(0,0,0);
+  pointer-events: none;
+}
+
+/* Overlays */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  opacity: var(--noise-opacity);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.2) 70%),
+              linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Foreground Layer */
+.slide-fg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  z-index: 4;
+  scale: var(--gallery-zoom-start);
+  translate: 0 0;
+  will-change: scale, translate;
+}
+
+.slide.active .slide-fg {
+  animation: kenBurns 6s cubic-bezier(.25,.46,.45,.94) forwards, ambientFloat 6s ease-in-out forwards;
+}
+
+/* Glass Navigation Buttons */
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: var(--dayak-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background var(--motion-sm), transform var(--motion-sm), opacity var(--motion-sm);
+}
+
+.gallery-nav:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.gallery-nav.prev { left: var(--space-3); }
+.gallery-nav.next { right: var(--space-3); }
+
+/* Thumbnails */
+.gallery-thumbnails {
+  display: flex;
+  gap: 12px;
+  padding: 16px var(--space-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  position: relative; /* if placing inside the gallery container at the bottom, set position absolute bottom 0 */
+  /* Wait, the HTML has it below the viewport, inside luxury-gallery. */
+}
+.gallery-thumbnails::-webkit-scrollbar { display: none; }
+
+.gallery-thumb {
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  object-fit: cover;
+  object-position: center 20%;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: var(--thumb-opacity);
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: opacity 800ms var(--gallery-ease),
+              transform 800ms var(--gallery-ease),
+              filter 800ms var(--gallery-ease),
+              box-shadow 800ms var(--gallery-ease);
+}
+
+.gallery-thumb.active {
+  opacity: 1;
+  transform: scale(var(--thumb-active-scale));
+  box-shadow: 0 8px 25px rgba(201,168,106,0.25);
+  border-color: rgba(201,168,106,0.5); /* subtle gold */
+  filter: brightness(1.03) contrast(1.04) saturate(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide.active .slide-fg {
+    animation: none;
+  }
+  .slide {
+    transition: opacity 400ms var(--gallery-ease), visibility 400ms step-end;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .animate-float, .music-btn, .music-btn.playing i { animation: none !important; }
@@ -340,13 +510,25 @@
   color: #FFF2D6; /* Bright pale gold base */
 }
 
-/* Background Zoom Out */
+/* Background Zoom Out & Continuous Ken Burns breathing */
 .hero-bg-zoom {
   scale: 1.15;
   transition: scale 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, scale;
 }
 body.is-opened .hero-bg-zoom {
   scale: 1;
+  /* Start breathing loop after the 4s zoom-out entrance transition is complete */
+  animation: bg-breathing 16s infinite ease-in-out 4s;
+}
+
+@keyframes bg-breathing {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
 }
 
 /* Motif Slide In */
@@ -381,6 +563,39 @@ body.is-opened .hero-fade-in-up {
   opacity: 1;
 }
 
+/* Couple Photo Zoom In Reveal */
+.hero-photo-zoom {
+  scale: 0.82;
+  opacity: 0;
+  transition: scale 2.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s, opacity 2.8s ease 0.5s;
+}
+body.is-opened .hero-photo-zoom {
+  scale: 1;
+  opacity: 1;
+}
+
+/* Dayak Gold Motif Slide In Left */
+.hero-gold-slide-left {
+  translate: -120px 0;
+  opacity: 0;
+  transition: translate 2.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s, opacity 2.6s ease 0.4s;
+}
+body.is-opened .hero-gold-slide-left {
+  translate: 0 0;
+  opacity: 0.75;
+}
+
+/* Dayak Gold Motif Slide In Right */
+.hero-gold-slide-right {
+  translate: 120px 0;
+  opacity: 0;
+  transition: translate 2.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s, opacity 2.6s ease 0.4s;
+}
+body.is-opened .hero-gold-slide-right {
+  translate: 0 0;
+  opacity: 0.75;
+}
+
 /* ==========================================================================
    EASTER EGG (SIGNATURE REVEAL)
    ========================================================================== */
@@ -402,4 +617,284 @@ body.is-opened .hero-fade-in-up {
   transform: scale(0.9);
   opacity: 1;
   filter: drop-shadow(0 0 20px rgba(255, 193, 7, 1));
+}
+
+/* ==========================================================================
+   HERO COVER PHOTO LUXURY POLISH
+   ========================================================================== */
+/* Rim-light / Contour Gold Glow wrapping exactly around the couple's PNG silhouettes */
+.hero-rim-glow-img {
+  will-change: filter;
+  animation: hero-rim-glow 8s infinite ease-in-out alternate;
+}
+
+@keyframes hero-rim-glow {
+  0% {
+    filter: drop-shadow(0 0 6px rgba(235, 181, 95, 0.4))
+            drop-shadow(0 15px 30px rgba(0, 0, 0, 0.65));
+  }
+  100% {
+    filter: drop-shadow(0 0 16px rgba(255, 218, 140, 0.75))
+            drop-shadow(0 15px 30px rgba(0, 0, 0, 0.65));
+  }
+}
+
+/* Highly-diffused warm champagne backlight (strictly behind the subject, no overlay on face) */
+.hero-backlight {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(0);
+  width: min(90vw, 420px);
+  height: min(90vw, 420px);
+  border-radius: var(--radius-circle);
+  background: radial-gradient(circle, rgba(255, 252, 243, 0.2) 0%, rgba(235, 181, 95, 0.05) 50%, transparent 75%);
+  filter: blur(65px);
+  z-index: 5;
+  pointer-events: none;
+  mix-blend-mode: plus-lighter;
+  animation: backlight-pulse 24s infinite ease-in-out alternate;
+  will-change: opacity, transform, filter;
+}
+
+@keyframes backlight-pulse {
+  0% {
+    opacity: 0.45;
+    transform: translateX(-50%) scale(0.95);
+    filter: blur(60px);
+  }
+  100% {
+    opacity: 0.75;
+    transform: translateX(-50%) scale(1.08);
+    filter: blur(75px);
+  }
+}
+
+/* ==========================================================================
+   CROSS ICON ROTATION & SWIVEL (VVIP LUXURY INTERACTION)
+   ========================================================================== */
+.hero-cross-swivel {
+  perspective: 1000px;
+  display: inline-block;
+  opacity: 0;
+  transform: rotateY(-180deg) scale(0.5);
+  transition: transform 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s, opacity 2.5s ease 0.8s;
+  will-change: transform, opacity;
+}
+
+body.is-opened .hero-cross-swivel {
+  opacity: 1;
+  transform: rotateY(0deg) scale(1);
+  /* Triggers loop rotation after 3.3 seconds (0.8s delay + 2.5s transition) */
+  animation: swivel-continuous 8s linear infinite 3.5s;
+}
+
+@keyframes swivel-continuous {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+/* ==========================================================================
+   MEMPELAI PHOTO SPOTLIGHT GLOW ON REVEAL
+   ========================================================================== */
+/* Triggers elegant pulsating spotlight glow once scrolled into view */
+.reveal.is-visible .c-photo-frame {
+  animation: spotlight-pulse 3.5s infinite ease-in-out alternate;
+}
+
+@keyframes spotlight-pulse {
+  0% {
+    box-shadow: 0 0 8px var(--glow-color, rgba(235, 181, 95, 0.45));
+  }
+  100% {
+    box-shadow: 0 0 25px var(--glow-color, rgba(235, 181, 95, 0.8)),
+                0 0 10px var(--glow-color, rgba(235, 181, 95, 0.45));
+  }
+}
+
+/* ==========================================================================
+   VINTAGE PAPER TIMELINE & HANDWRITTEN TYPOGRAPHY
+   ========================================================================== */
+.vintage-paper-panel {
+  background: linear-gradient(135deg, #fdfbf7 0%, #f4edd9 100%) !important;
+  border: 8px double #c5b49a !important;
+  border-radius: 6px;
+  box-shadow: inset 0 0 45px rgba(139, 90, 43, 0.15), 
+              0 10px 25px rgba(0, 0, 0, 0.35), 
+              0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Coffee aging corner gradients for luxury vintage atmosphere */
+.vintage-paper-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 5% 5%, rgba(139, 90, 43, 0.06) 0%, transparent 35%),
+              radial-gradient(circle at 95% 95%, rgba(139, 90, 43, 0.06) 0%, transparent 35%);
+  z-index: 2;
+}
+
+.vintage-title {
+  font-family: 'Kalam', cursive !important;
+}
+
+.vintage-text {
+  font-family: 'Kalam', cursive !important;
+  text-shadow: 0.3px 0.3px 0px rgba(0,0,0,0.05); /* organic ink bleed feel */
+}
+
+.vintage-badge {
+  font-family: 'Kalam', cursive !important;
+  background: rgba(139, 90, 43, 0.12) !important;
+  color: #8b4513 !important;
+  border: 1px dashed rgba(139, 90, 43, 0.35) !important;
+  padding: 2px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  font-weight: 700;
+  font-size: 0.95rem !important;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Customized Stitched Timeline Line inside Vintage Paper */
+.vintage-paper-panel .c-timeline {
+  border-left: 2px dashed #bbaaa0 !important;
+}
+
+.vintage-paper-panel .c-timeline__item::before {
+  background: #d32f2f !important;
+  border: 2px solid #ffc107 !important;
+  box-shadow: 0 0 6px rgba(211, 47, 47, 0.5);
+}
+
+/* Paper slide & micro-highlight animation on hover */
+.vintage-paper-panel .c-timeline__item {
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.45s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-left: -12px;
+}
+
+.vintage-paper-panel .c-timeline__item:hover {
+  transform: translateX(8px);
+  background: rgba(139, 90, 43, 0.04);
+}
+
+/* ==========================================================================
+   EVENT CARD SHARP GOLD BORDER GLOW (VVIP PREMIUM HALO)
+   ========================================================================== */
+.c-glass-panel--dark {
+  position: relative !important;
+  border: 1px solid rgba(235, 181, 95, 0.75) !important; /* Sharp golden physical border */
+  box-shadow: 0 0 0 1px rgba(235, 181, 95, 0.35), /* Razor-sharp gold outer filament */
+              0 0 12px rgba(235, 181, 95, 0.22), /* Soft elegant gold ambient glow */
+              var(--shadow-lg) !important;
+  transition: transform var(--motion-medium) var(--ease-standard), 
+              box-shadow var(--motion-medium) var(--ease-standard),
+              border-color var(--motion-medium) var(--ease-standard) !important;
+  animation: sharp-gold-border-glow 6s infinite ease-in-out alternate;
+  will-change: border-color, box-shadow;
+}
+
+.c-glass-panel--dark:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(255, 218, 140, 1) !important;
+  box-shadow: 0 0 0 1.5px rgba(255, 218, 140, 0.65), /* Sharper and brighter on hover */
+              0 0 20px rgba(235, 181, 95, 0.45),
+              var(--shadow-xl) !important;
+}
+
+@keyframes sharp-gold-border-glow {
+  0% {
+    border-color: rgba(235, 181, 95, 0.65) !important;
+    box-shadow: 0 0 0 1px rgba(235, 181, 95, 0.3),
+                0 0 10px rgba(235, 181, 95, 0.18),
+                var(--shadow-lg) !important;
+  }
+  100% {
+    border-color: rgba(255, 223, 140, 0.95) !important;
+    box-shadow: 0 0 0 1px rgba(255, 223, 140, 0.55),
+                0 0 18px rgba(235, 181, 95, 0.35),
+                var(--shadow-lg) !important;
+  }
+}
+
+/* ==========================================================================
+   STANDARD & WARM GLASS PANELS SHARP GLOW OVERRIDES
+   ========================================================================== */
+.c-glass-panel {
+  border-color: rgba(235, 181, 95, 0.55) !important;
+  box-shadow: 0 0 0 1px rgba(235, 181, 95, 0.3), /* Sharp gold filament */
+              0 0 10px rgba(235, 181, 95, 0.18), /* Ambient halo */
+              var(--shadow-md) !important;
+  transition: transform var(--motion-medium) var(--ease-standard), 
+              box-shadow var(--motion-medium) var(--ease-standard),
+              border-color var(--motion-medium) var(--ease-standard) !important;
+  animation: sharp-gold-border-glow-standard 6s infinite ease-in-out alternate;
+  will-change: border-color, box-shadow;
+}
+
+.c-glass-panel:hover {
+  transform: translateY(-3px) scale(1.005);
+  border-color: rgba(255, 218, 140, 0.95) !important;
+  box-shadow: 0 0 0 1.5px rgba(255, 218, 140, 0.55),
+              0 0 18px rgba(235, 181, 95, 0.35),
+              var(--shadow-lg) !important;
+}
+
+@keyframes sharp-gold-border-glow-standard {
+  0% {
+    border-color: rgba(235, 181, 95, 0.5) !important;
+    box-shadow: 0 0 0 1px rgba(235, 181, 95, 0.25),
+                0 0 8px rgba(235, 181, 95, 0.15),
+                var(--shadow-md) !important;
+  }
+  100% {
+    border-color: rgba(255, 223, 140, 0.85) !important;
+    box-shadow: 0 0 0 1px rgba(255, 223, 140, 0.5),
+                0 0 16px rgba(235, 181, 95, 0.3),
+                var(--shadow-md) !important;
+  }
+}
+
+.c-glass-panel--warm {
+  border-color: rgba(255, 193, 7, 0.55) !important;
+  box-shadow: 0 0 0 1px rgba(255, 193, 7, 0.3), /* Sharp amber filament */
+              0 0 10px rgba(255, 193, 7, 0.18), /* Ambient halo */
+              var(--shadow-md) !important;
+  transition: transform var(--motion-medium) var(--ease-standard), 
+              box-shadow var(--motion-medium) var(--ease-standard),
+              border-color var(--motion-medium) var(--ease-standard) !important;
+  animation: sharp-warm-border-glow 6s infinite ease-in-out alternate;
+  will-change: border-color, box-shadow;
+}
+
+.c-glass-panel--warm:hover {
+  transform: translateY(-3px) scale(1.005);
+  border-color: rgba(255, 218, 140, 0.95) !important;
+  box-shadow: 0 0 0 1.5px rgba(255, 218, 140, 0.55),
+              0 0 18px rgba(255, 193, 7, 0.35),
+              var(--shadow-lg) !important;
+}
+
+@keyframes sharp-warm-border-glow {
+  0% {
+    border-color: rgba(255, 193, 7, 0.5) !important;
+    box-shadow: 0 0 0 1px rgba(255, 193, 7, 0.25),
+                0 0 8px rgba(255, 193, 7, 0.15),
+                var(--shadow-md) !important;
+  }
+  100% {
+    border-color: rgba(255, 218, 140, 0.85) !important;
+    box-shadow: 0 0 0 1px rgba(255, 218, 140, 0.5),
+                0 0 16px rgba(255, 193, 7, 0.3),
+                var(--shadow-md) !important;
+  }
 }

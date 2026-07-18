@@ -139,7 +139,20 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (type === 'firefly') {
             p.style.top = Math.random() * 100 + 'vh';
-            p.style.animationDelay = `-${Math.random() * 4}s`;
+            
+            // Random duration & delay for glow (index 0) and drift (index 1)
+            const driftDuration = 10 + Math.random() * 10; // 10s to 20s drift
+            const glowDuration = 3 + Math.random() * 3; // 3s to 6s blink
+            p.style.animationDuration = `${glowDuration}s, ${driftDuration}s`;
+            p.style.animationDelay = `-${Math.random() * glowDuration}s, -${Math.random() * driftDuration}s`;
+            
+            // Randomize X and Y translation boundaries for unique paths
+            p.style.setProperty('--x1', `${-35 + Math.random() * 70}px`);
+            p.style.setProperty('--y1', `${-40 + Math.random() * 80}px`);
+            p.style.setProperty('--x2', `${-35 + Math.random() * 70}px`);
+            p.style.setProperty('--y2', `${-40 + Math.random() * 80}px`);
+            p.style.setProperty('--x3', `${-35 + Math.random() * 70}px`);
+            p.style.setProperty('--y3', `${-40 + Math.random() * 80}px`);
             
             const size = 3 + Math.random() * 4;
             p.style.width = size + 'px';
@@ -150,8 +163,20 @@ document.addEventListener('DOMContentLoaded', () => {
             p.style.animationDuration = `${duration}s`;
             p.style.animationDelay = `-${Math.random() * duration}s`;
             
+            // Kalimantan dry forest foliage color palette (harmonious warm earth tones)
+            const leafColors = [
+                '#8C4F2B', // Dried copper sienna
+                '#9E6F43', // Warm mahogany tan
+                '#B8860B', // Earthy ochre gold
+                '#7A6038', // Muted olive clay
+                '#8C7350', // Soft dried branch brown
+                '#5C6E3D'  // Dried rainforest leaf green
+            ];
+            p.style.backgroundColor = leafColors[Math.floor(Math.random() * leafColors.length)];
+            
             p.addEventListener('animationiteration', () => {
                 p.style.left = Math.random() * 100 + 'vw';
+                p.style.backgroundColor = leafColors[Math.floor(Math.random() * leafColors.length)];
             });
         }
         
