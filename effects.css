@@ -96,7 +96,7 @@
   background-size: 200% auto !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  -webkit-text-stroke: 0.8px #8B0000 !important; /* Subtle matching deep red outline */
+  -webkit-text-stroke: 0.35px #8B0000 !important; /* Elegant ultra-thin matching deep red outline */
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45)) 
           drop-shadow(0 0 12px rgba(255, 193, 7, 0.65)) !important;
   animation: welcome-gold-shimmer 8s linear infinite !important;
