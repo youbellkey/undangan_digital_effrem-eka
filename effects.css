@@ -86,6 +86,29 @@
 #welcome-overlay.welcome-open { opacity: 0; visibility: hidden; pointer-events: none; }
 #welcome-overlay.slide-up { transform: translateY(-100%) scaleY(0.9); opacity: 0; }
 
+/* Welcome Names VVIP Gold Shimmer & Glow */
+.welcome-names {
+  font-family: 'Great Vibes', cursive !important;
+  font-size: clamp(2.6rem, 9.5vw, 3.8rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  background: linear-gradient(135deg, #FFF9E6 0%, #F1C40F 25%, #E1B12C 50%, #F39C12 75%, #FFF9E6 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45)) 
+          drop-shadow(0 0 12px rgba(255, 193, 7, 0.65)) !important;
+  animation: welcome-gold-shimmer 8s linear infinite !important;
+  display: inline-block !important;
+  margin: 14px 0 !important;
+  text-align: center;
+}
+
+@keyframes welcome-gold-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
 /* 3. SCROLL PROGRESS BAR */
 #scroll-progress {
   position: fixed; top: 0; left: 0; height: 4px; background: var(--dayak-yellow);
