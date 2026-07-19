@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Lato:wght@300;400;700&display=block" rel="stylesheet">
     <!-- QR Code library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/js/config.js"></script>
     <style>
         body { font-family: 'Lato', sans-serif; }
@@ -131,10 +132,19 @@
             </div>
         </header>
 
-        <!-- Main -->
-        <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+        <!-- Tabs -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-4">
+            <div class="flex gap-4 border-b border-gray-200">
+                <button id="tabBtnGuests" onclick="switchTab('guests')" class="font-bold text-red-700 border-b-2 border-red-700 pb-2 px-2 transition-colors">Manajemen Tamu</button>
+                <button id="tabBtnRsvp" onclick="switchTab('rsvp')" class="font-bold text-gray-500 hover:text-gray-700 border-b-2 border-transparent pb-2 px-2 transition-colors">Data RSVP</button>
+            </div>
+        </div>
 
-            <!-- Stats cards -->
+        <!-- Main -->
+        <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+            
+            <div id="guestsView" class="space-y-4">
+                <!-- Stats cards -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
                     <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Total</p>
@@ -196,6 +206,58 @@
                         <!-- Filled by JS -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- RSVP View -->
+            <div id="rsvpView" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-gray-800">Data Kehadiran</h2>
+                    <button onclick="loadRSVP()" class="bg-blue-600 text-white px-4 py-2 rounded-xl shadow-sm text-sm font-bold hover:bg-blue-700 transition">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh Data
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-t-4 border-yellow-500">
+                        <h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Total Merespon</h3>
+                        <p id="rsvpTotalResponds" class="text-2xl font-bold text-gray-800">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-t-4 border-green-500">
+                        <h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Total Hadir (Orang)</h3>
+                        <p id="rsvpTotalAttending" class="text-2xl font-bold text-green-600">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-t-4 border-red-500">
+                        <h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Tidak Hadir (Keluarga)</h3>
+                        <p id="rsvpTotalNotAttending" class="text-2xl font-bold text-red-600">0</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1">
+                        <h3 class="font-bold text-gray-800 mb-4 text-sm uppercase tracking-wider">Grafik Kehadiran</h3>
+                        <div style="position: relative; height: 250px; width: 100%;">
+                            <canvas id="rsvpChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-x-auto lg:col-span-2 relative min-h-[250px]">
+                        <div id="rsvpLoadingOverlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 hidden flex-col items-center justify-center">
+                            <i class="fas fa-spinner fa-spin text-blue-600 text-3xl mb-2"></i>
+                            <p class="text-sm font-bold text-gray-600">Memuat Data RSVP...</p>
+                        </div>
+                        <table class="w-full text-sm min-w-[500px]">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Waktu</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Nama Tamu</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-24">Status</th>
+                                    <th class="px-4 py-3 text-center text-xs font-bold text-gray-400 uppercase tracking-wider w-24">Jumlah</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rsvpTableBody" class="divide-y divide-gray-100">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
         </main>
@@ -590,6 +652,101 @@
         } catch (e) {
             alert('Gagal menghapus tamu: ' + e.message);
         }
+    }
+
+    // ================== TAB & RSVP ==================
+    function switchTab(tabId) {
+        document.getElementById('guestsView').classList.add('hidden');
+        document.getElementById('rsvpView').classList.add('hidden');
+        document.getElementById('tabBtnGuests').className = 'font-bold text-gray-500 hover:text-gray-700 border-b-2 border-transparent pb-2 px-2 transition-colors';
+        document.getElementById('tabBtnRsvp').className = 'font-bold text-gray-500 hover:text-gray-700 border-b-2 border-transparent pb-2 px-2 transition-colors';
+        
+        if (tabId === 'guests') {
+            document.getElementById('guestsView').classList.remove('hidden');
+            document.getElementById('guestsView').classList.add('space-y-4');
+            document.getElementById('tabBtnGuests').className = 'font-bold text-red-700 border-b-2 border-red-700 pb-2 px-2 transition-colors';
+        } else {
+            document.getElementById('rsvpView').classList.remove('hidden');
+            document.getElementById('tabBtnRsvp').className = 'font-bold text-red-700 border-b-2 border-red-700 pb-2 px-2 transition-colors';
+            if (document.getElementById('rsvpTableBody').children.length === 0) {
+                loadRSVP();
+            }
+        }
+    }
+
+    let rsvpChartInstance = null;
+    async function loadRSVP() {
+        document.getElementById('rsvpLoadingOverlay').classList.remove('hidden');
+        document.getElementById('rsvpTableBody').innerHTML = '';
+        try {
+            const data = await apiCall({ action: 'getRSVP' });
+            renderRSVP(data);
+        } catch (e) {
+            document.getElementById('rsvpTableBody').innerHTML = `<tr><td colspan="4" class="text-center text-red-500 py-4 text-sm font-bold">${e.message}</td></tr>`;
+        } finally {
+            document.getElementById('rsvpLoadingOverlay').classList.add('hidden');
+        }
+    }
+
+    function renderRSVP(data) {
+        const tbody = document.getElementById('rsvpTableBody');
+        tbody.innerHTML = '';
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Belum ada data RSVP.</td></tr>';
+            return;
+        }
+
+        let totalResponds = 0;
+        let totalAttendingHeads = 0;
+        let totalNotAttending = 0;
+        let hadirCount = 0;
+
+        data.forEach(row => {
+            totalResponds++;
+            const isHadir = row.status === 'Hadir';
+            if (isHadir) {
+                hadirCount++;
+                totalAttendingHeads += (parseInt(row.count) || 0);
+            } else {
+                totalNotAttending++;
+            }
+
+            const dateStr = new Date(row.timestamp).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', hour:'2-digit', minute:'2-digit'});
+            const badge = isHadir 
+                ? '<span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded-md tracking-wider border border-green-200">Hadir</span>'
+                : '<span class="px-2 py-1 bg-red-100 text-red-700 text-[10px] font-bold uppercase rounded-md tracking-wider border border-red-200">Tidak Hadir</span>';
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-400 text-xs font-mono">${dateStr}</td>
+                    <td class="px-4 py-3 font-bold text-gray-800 text-sm">${escHtml(row.name)}</td>
+                    <td class="px-4 py-3">${badge}</td>
+                    <td class="px-4 py-3 text-center font-bold text-gray-700">${isHadir ? row.count : '-'}</td>
+                </tr>`;
+        });
+
+        document.getElementById('rsvpTotalResponds').textContent = totalResponds;
+        document.getElementById('rsvpTotalAttending').textContent = totalAttendingHeads;
+        document.getElementById('rsvpTotalNotAttending').textContent = totalNotAttending;
+
+        const ctx = document.getElementById('rsvpChart').getContext('2d');
+        if (rsvpChartInstance) rsvpChartInstance.destroy();
+        rsvpChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Hadir', 'Tidak Hadir'],
+                datasets: [{
+                    data: [hadirCount, totalNotAttending],
+                    backgroundColor: ['#10B981', '#EF4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
     }
 
     /* =========================================================================
