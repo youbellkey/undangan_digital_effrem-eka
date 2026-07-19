@@ -140,7 +140,11 @@ function doPost(e) {
       case 'createGuest':
         return handleCreateGuest(body);
       case 'updateGuest':
+        if (!isValidAdmin(body.session)) return jsonResponse(false, 'Unauthorized');
         return handleUpdateGuest(body);
+      case 'deleteGuest':
+        if (!isValidAdmin(body.session)) return jsonResponse(false, 'Unauthorized');
+        return handleDeleteGuest(body);
       case 'submitRSVP':
         return handleSubmitRSVP(body);
       case 'submitGuestbook':
@@ -278,6 +282,21 @@ function handleUpdateGuest(body) {
   sheet.getRange(guest._rowIndex, 8).setValue(now);
   
   return jsonResponse(true, 'Guest updated');
+}
+
+function handleDeleteGuest(body) {
+  const { uuid } = body;
+  if (!uuid) return jsonResponse(false, 'UUID is required');
+  
+  const guests = getSheetData('Guests');
+  const guest = guests.find(g => g.uuid === uuid);
+  
+  if (!guest) return jsonResponse(false, 'Guest not found');
+  
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Guests');
+  sheet.deleteRow(guest._rowIndex);
+  
+  return jsonResponse(true, 'Guest deleted');
 }
 
 function handleSubmitRSVP(body) {

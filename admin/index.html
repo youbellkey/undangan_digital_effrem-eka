@@ -476,6 +476,10 @@
                             title="${isActive ? 'Nonaktifkan' : 'Aktifkan'}" onclick="toggleStatus('${g.uuid}')">
                             <i class="fas fa-${isActive ? 'ban' : 'check-circle'}"></i>
                         </button>
+                        <button class="icon-btn bg-red-50 text-red-600 hover:bg-red-100"
+                            title="Hapus Tamu" onclick="deleteGuest('${g.uuid}', '${escHtml(g.displayName).replace(/'/g, "\\'")}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 </td>
             </tr>`;
@@ -564,15 +568,27 @@
        ========================================================================= */
     async function toggleStatus(uuid) {
         const guest = guests.find(g => g.uuid === uuid);
+        if (!guest) return;
         const newStatus = guest.status === 'active' ? 'inactive' : 'active';
-        
         try {
-            showToast('Menyimpan perubahan...');
             await apiCall({ action: 'updateGuest', uuid: uuid, status: newStatus });
+            showToast(`🔄 Status diubah menjadi ${newStatus}`);
             loadGuests();
-            showToast(newStatus === 'active' ? '✅ Tamu diaktifkan.' : '🚫 Tamu dinonaktifkan.');
         } catch (e) {
-            showToast('❌ Gagal: ' + e.message);
+            alert('Gagal update status: ' + e.message);
+        }
+    }
+
+    async function deleteGuest(uuid, name) {
+        if (!confirm(`Apakah Anda yakin ingin MENGHAPUS tamu "${name}" secara permanen? Data yang dihapus tidak dapat dikembalikan.`)) {
+            return;
+        }
+        try {
+            await apiCall({ action: 'deleteGuest', uuid: uuid });
+            showToast('🗑️ Tamu berhasil dihapus permanen');
+            loadGuests();
+        } catch (e) {
+            alert('Gagal menghapus tamu: ' + e.message);
         }
     }
 
