@@ -521,8 +521,12 @@
         }, 120);
     }
 
+    function toTitleCase(str) {
+        return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }
+
     async function saveGuest() {
-        const name = document.getElementById('guestNameInput').value.trim();
+        const name = toTitleCase(document.getElementById('guestNameInput').value.trim());
         const errEl = document.getElementById('guestNameError');
         if (!name) {
             errEl.classList.remove('hidden');
