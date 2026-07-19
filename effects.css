@@ -88,14 +88,14 @@
 
 /* Welcome Names VVIP Gold Shimmer & Glow */
 .welcome-names {
-  font-family: 'Great Vibes', cursive !important;
-  font-size: clamp(2.6rem, 9.5vw, 3.8rem) !important;
+  font-family: 'Alex Brush', cursive !important;
+  font-size: clamp(2.8rem, 10vw, 4rem) !important;
   font-weight: 700 !important;
   line-height: 1.25 !important;
   background: none !important;
   -webkit-background-clip: initial !important;
   -webkit-text-fill-color: #ffffff !important; /* Solid elegant white fill */
-  -webkit-text-stroke: 0.6px #D4AF37 !important; /* Premium bright gold outline */
+  -webkit-text-stroke: 0.3px #D4AF37 !important; /* Elegant ultra-thin gold outline */
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45)) 
           drop-shadow(0 0 12px rgba(255, 193, 7, 0.45)) !important; /* Gold ambient glow */
   display: inline-block !important;
