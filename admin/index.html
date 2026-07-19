@@ -679,8 +679,8 @@
         document.getElementById('rsvpLoadingOverlay').classList.remove('hidden');
         document.getElementById('rsvpTableBody').innerHTML = '';
         try {
-            const data = await apiCall({ action: 'getRSVP' });
-            renderRSVP(data);
+            const res = await apiCall({ action: 'getRSVP' });
+            renderRSVP(res.data);
         } catch (e) {
             document.getElementById('rsvpTableBody').innerHTML = `<tr><td colspan="4" class="text-center text-red-500 py-4 text-sm font-bold">${e.message}</td></tr>`;
         } finally {
