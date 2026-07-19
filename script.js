@@ -342,8 +342,9 @@
     function loadMessages() {
       fetch(API_URL + "?action=getGuestbook")
         .then(res => res.json())
-        .then(data => {
+        .then(resData => {
           box.innerHTML = ''; // Clear loading text
+          const data = Array.isArray(resData.data) ? resData.data : [];
           if (data.length === 0) {
             box.innerHTML = '<div class="text-center text-gray-500 text-sm py-4">Belum ada ucapan. Jadilah yang pertama!</div>';
             return;
