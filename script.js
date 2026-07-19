@@ -271,24 +271,18 @@
   /* ---------------- RSVP FORM ---------------- */
   const rsvpForm = document.getElementById('rsvpForm');
   if (rsvpForm) {
-    const rsvpName = document.getElementById('rsvpName');
     const rsvpStatus = document.getElementById('rsvpStatus');
     const rsvpCount = document.getElementById('rsvpCount');
 
-    [rsvpName, rsvpStatus].forEach((input) => {
-      if (!input) return;
-      input.addEventListener('blur', () => validateRequired(input));
-    });
+    if (rsvpStatus) rsvpStatus.addEventListener('blur', () => validateRequired(rsvpStatus));
 
     rsvpForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const nameValid = validateRequired(rsvpName, 'Mohon isi nama lengkap Anda.');
       const statusValid = validateRequired(rsvpStatus, 'Mohon pilih konfirmasi kehadiran.');
 
-      if (!nameValid || !statusValid) {
-        const firstInvalid = !nameValid ? rsvpName : rsvpStatus;
-        firstInvalid.focus();
+      if (!statusValid) {
+        rsvpStatus.focus();
         return;
       }
 
@@ -300,10 +294,12 @@
       }
 
       const countValue = rsvpCount && rsvpCount.value ? parseInt(rsvpCount.value, 10) : 0;
-      
+      const _rsvpGuest = window.__currentGuest;
+
       const payload = {
         action: "rsvp",
-        name: rsvpName.value.trim(),
+        guestId: _rsvpGuest ? _rsvpGuest.uuid : '',
+        name: _rsvpGuest ? _rsvpGuest.displayName : 'Tamu',
         status: rsvpStatus.value,
         count: rsvpStatus.value === 'Hadir' ? countValue : 0
       };
@@ -316,7 +312,10 @@
       .then(response => response.json())
       .then(data => {
         showToast('Konfirmasi kehadiran berhasil dikirim!');
-        rsvpForm.reset();
+        if (rsvpStatus) rsvpStatus.value = '';
+        if (rsvpCount) rsvpCount.value = '';
+        var _g0 = window.__currentGuest;
+        if (_g0) { var _el0 = document.getElementById('rsvpGuestId'); if (_el0) _el0.value = _g0.uuid; }
       })
       .catch(error => {
         showToast('Terjadi kesalahan. Silakan coba lagi.');
@@ -336,13 +335,9 @@
   const box = document.getElementById('comments-box');
   
   if (guestForm && box) {
-    const guestName = document.getElementById('guestName');
     const guestMessage = document.getElementById('guestMessage');
 
-    [guestName, guestMessage].forEach((input) => {
-      if (!input) return;
-      input.addEventListener('blur', () => validateRequired(input));
-    });
+    if (guestMessage) guestMessage.addEventListener('blur', () => validateRequired(guestMessage));
     
     // Load existing messages
     function loadMessages() {
@@ -356,7 +351,10 @@
           }
           
           data.forEach(msg => {
-            const isMine = (msg.authorId === myAuthorId);
+            const _activeGuest = window.__currentGuest;
+            const isMine = _activeGuest
+              ? (msg.authorId === _activeGuest.uuid)
+              : (msg.authorId === myAuthorId);
             const dateStr = new Date(msg.timestamp).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
             
             const newComment = document.createElement('div');
@@ -384,7 +382,6 @@
             if (isMine) {
               html += `
               <div class="edit-form hidden mt-2">
-                <input type="text" class="edit-input-name c-input w-full mb-2 text-sm" value="${escapeHtml(msg.name.replace(/"/g, '&quot;'))}">
                 <textarea class="edit-input-message c-input c-input--textarea w-full mb-2 text-sm" rows="2">${escapeHtml(msg.message)}</textarea>
                 <div class="flex justify-end gap-2">
                   <button type="button" class="px-3 py-1 text-xs text-gray-600 bg-gray-200 rounded hover:bg-gray-300 cancel-edit-btn">Batal</button>
@@ -403,7 +400,6 @@
               const editForm = newComment.querySelector('.edit-form');
               const cancelEditBtn = newComment.querySelector('.cancel-edit-btn');
               const saveEditBtn = newComment.querySelector('.save-edit-btn');
-              const editInputName = newComment.querySelector('.edit-input-name');
               const editInputMessage = newComment.querySelector('.edit-input-message');
               
               editBtn.addEventListener('click', () => {
@@ -414,30 +410,30 @@
               cancelEditBtn.addEventListener('click', () => {
                 editForm.classList.add('hidden');
                 messageContent.classList.remove('hidden');
-                editInputName.value = msg.name;
                 editInputMessage.value = msg.message;
               });
 
               saveEditBtn.addEventListener('click', () => {
-                const newName = editInputName.value.trim();
                 const newMsg = editInputMessage.value.trim();
 
-                if (!newName || !newMsg) {
-                  showToast('Nama dan ucapan tidak boleh kosong!');
+                if (!newMsg) {
+                  showToast('Ucapan tidak boleh kosong!');
                   return;
                 }
 
                 saveEditBtn.disabled = true;
                 saveEditBtn.textContent = '...';
 
+                const _editGuest = window.__currentGuest;
                 fetch(API_URL, {
                   method: 'POST',
                   headers: { 'Content-Type': 'text/plain' },
                   body: JSON.stringify({
                     action: "editMessage",
                     id: msg.id,
-                    authorId: myAuthorId,
-                    name: newName,
+                    guestId: _editGuest ? _editGuest.uuid : myAuthorId,
+                    authorId: _editGuest ? _editGuest.uuid : myAuthorId,
+                    name: _editGuest ? _editGuest.displayName : msg.name,
                     message: newMsg
                   })
                 })
@@ -478,12 +474,10 @@
     guestForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const nameValid = validateRequired(guestName, 'Mohon isi nama Anda.');
       const msgValid = validateRequired(guestMessage, 'Mohon tulis ucapan & doa.');
 
-      if (!nameValid || !msgValid) {
-        const firstInvalid = !nameValid ? guestName : guestMessage;
-        firstInvalid.focus();
+      if (!msgValid) {
+        guestMessage.focus();
         return;
       }
       
@@ -494,10 +488,12 @@
         submitBtn.textContent = 'Mengirim...';
       }
 
+      const _gbGuest = window.__currentGuest;
       const payload = {
         action: "addMessage",
-        authorId: myAuthorId,
-        name: guestName.value.trim(),
+        guestId: _gbGuest ? _gbGuest.uuid : myAuthorId,
+        authorId: _gbGuest ? _gbGuest.uuid : myAuthorId,
+        name: _gbGuest ? _gbGuest.displayName : 'Tamu',
         message: guestMessage.value.trim()
       };
 
@@ -509,7 +505,10 @@
       .then(res => res.json())
       .then(data => {
         showToast('Ucapan berhasil dikirim. Terima kasih!');
-        guestForm.reset();
+        guestMessage.value = '';
+        clearFieldError(guestMessage);
+        var _g1 = window.__currentGuest;
+        if (_g1) { var _el1 = document.getElementById('guestbookGuestId'); if (_el1) _el1.value = _g1.uuid; }
         loadMessages(); // reload from sheet
         if (typeof window.burstConfetti === 'function') window.burstConfetti();
       })
@@ -530,13 +529,15 @@
       if (!confirm("Yakin ingin menghapus ucapan ini?")) return;
       
       showToast('Menghapus ucapan...');
+      var _delGuest = window.__currentGuest;
       fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
           action: "deleteMessage",
           id: id,
-          authorId: myAuthorId
+          guestId: _delGuest ? _delGuest.uuid : myAuthorId,
+          authorId: _delGuest ? _delGuest.uuid : myAuthorId
         })
       })
       .then(res => res.json())

@@ -69,7 +69,8 @@
 
             <p class="text-[#4A1212] italic text-shadow" style="font-size: 0.95rem; margin-bottom: 20px; letter-spacing: 0.02em;">Kepada Yth. Bapak/Ibu/Saudara/i</p>
             <div class="bg-gray-100 rounded-lg border border-gray-300 w-full" style="padding: 6px 20px; margin-bottom: 24px;">
-                <span class="text-gray-800 font-bold" style="font-size: 1.05rem; letter-spacing: 0.02em;">Tamu Undangan</span>
+                <span id="welcome-guest-name" class="text-gray-800 font-bold" style="font-size: 1.05rem; letter-spacing: 0.02em;">Tamu Undangan</span>
+                <span id="guest-greeting" class="sr-only" aria-live="polite"></span>
             </div>
             <button onclick="openInvitation()" type="button" class="c-btn c-btn--primary mx-auto shimmer" style="margin-top: 12px; position: relative; overflow: hidden; font-size: 0.85rem; padding: 10px 28px;">
                 <i class="fas fa-envelope-open" aria-hidden="true" style="font-size: 0.9rem; margin-right: 6px;"></i> Buka Undangan
@@ -402,9 +403,9 @@
                         <h3 class="text-[#8B0000] font-bold font-serif" style="font-size: clamp(1.1rem, 4vw, 1.4rem); margin-bottom: 12px;">Konfirmasi Kehadiran</h3>
                         <p class="text-gray-600" style="font-size: 0.85rem; margin-bottom: 24px;">Mohon kesediaan Anda mengisi form kehadiran di bawah ini.</p>
                         <form id="rsvpForm" novalidate>
-                            <label for="rsvpName" class="c-field-label">Nama lengkap<span class="req">*</span></label>
-                            <input type="text" id="rsvpName" name="rsvpName" required class="c-input" aria-describedby="rsvpName-error">
-                            <p id="rsvpName-error" class="c-error-msg" role="alert"></p>
+                            <label class="c-field-label">Nama</label>
+                            <div id="rsvpNameDisplay" class="c-input" style="background:#f5f5f5;color:#4a4a4a;pointer-events:none;user-select:none;" aria-readonly="true" role="text">Tamu Undangan</div>
+                            <input type="hidden" id="rsvpGuestId" value="">
 
                             <label for="rsvpStatus" class="c-field-label">Konfirmasi kehadiran<span class="req">*</span></label>
                             <select id="rsvpStatus" name="rsvpStatus" required class="c-input" aria-describedby="rsvpStatus-error">
@@ -448,9 +449,9 @@
                     <div class="c-glass-panel border-t-8 border-[#FFC107] reveal" style="padding: 32px 24px;">
                         <h3 class="text-[#8B0000] font-bold font-serif" style="font-size: clamp(1.1rem, 4vw, 1.4rem); margin-bottom: 16px;">Buku Ucapan &amp; Doa</h3>
                         <form id="guestbookForm" novalidate class="mb-6">
-                            <label for="guestName" class="c-field-label">Nama Anda<span class="req">*</span></label>
-                            <input type="text" id="guestName" name="guestName" required class="c-input" aria-describedby="guestName-error">
-                            <p id="guestName-error" class="c-error-msg" role="alert"></p>
+                            <label class="c-field-label">Nama</label>
+                            <div id="guestbookNameDisplay" class="c-input" style="background:#f5f5f5;color:#4a4a4a;pointer-events:none;user-select:none;" aria-readonly="true" role="text">Tamu Undangan</div>
+                            <input type="hidden" id="guestbookGuestId" value="">
 
                             <label for="guestMessage" class="c-field-label">Ucapan &amp; doa<span class="req">*</span></label>
                             <textarea id="guestMessage" name="guestMessage" required rows="3" class="c-input c-input--textarea" aria-describedby="guestMessage-error" placeholder="Tulis doa & ucapan..."></textarea>
@@ -526,7 +527,22 @@
         <p class="text-gray-400 mt-4 text-sm tracking-widest uppercase">Klik area luar untuk menutup</p>
     </div>
 
+    <script src="/js/GuestRepository.js"></script>
+    <script src="/js/CacheManager.js"></script>
+    <script src="/js/InvitationService.js"></script>
+    <script src="/js/MessageGenerator.js"></script>
     <script src="script.js?v=56"></script>
     <script src="effects.js?v=56"></script>
+    <script>
+      /* ── Initialize Guest-Centric Invitation System ── */
+      (function () {
+        var _repo  = new GuestRepository('/data/guests.json');
+        var _cache = new CacheManager();
+        window.__invitationService = new InvitationService(_repo, _cache);
+        window.__invitationService.init().catch(function (e) {
+          console.warn('[InvitationService]', e);
+        });
+      })();
+    </script>
 </body>
 </html>
