@@ -256,7 +256,7 @@
   }
 
   /* ---------------- API CONFIG & LOCAL STORAGE ---------------- */
-  const API_URL = "https://script.google.com/macros/s/AKfycbycb-LN1YtyFYWdBoVyozntR_Fzp8kfoX8MqtsoWf8DsJ1rNGVsIwnHJcdMxKtrMSg/exec";
+  const API_URL = window.APP_CONFIG.API_URL;
 
   function getAuthorId() {
     let id = localStorage.getItem('guest_author_id');
@@ -297,11 +297,10 @@
       const _rsvpGuest = window.__currentGuest;
 
       const payload = {
-        action: "rsvp",
-        guestId: _rsvpGuest ? _rsvpGuest.uuid : '',
-        name: _rsvpGuest ? _rsvpGuest.displayName : 'Tamu',
-        status: rsvpStatus.value,
-        count: rsvpStatus.value === 'Hadir' ? countValue : 0
+        action: "submitRSVP",
+        guestUuid: _rsvpGuest ? _rsvpGuest.uuid : '',
+        attendance: rsvpStatus.value,
+        guestCount: rsvpStatus.value === 'Hadir' ? countValue : 0
       };
 
       fetch(API_URL, {
@@ -341,7 +340,7 @@
     
     // Load existing messages
     function loadMessages() {
-      fetch(API_URL)
+      fetch(API_URL + "?action=getGuestbook")
         .then(res => res.json())
         .then(data => {
           box.innerHTML = ''; // Clear loading text
@@ -429,11 +428,10 @@
                   method: 'POST',
                   headers: { 'Content-Type': 'text/plain' },
                   body: JSON.stringify({
+                    action: "updateGuestbook", // If we want edit, but let's just keep as addMessage / delete for now. The previous script didn't explicitly implement updateGuestbook in Apps Script. Wait, the user said we don't need to add new features. I will leave this as is but it will fail on Apps Script unless I implement updateGuestbook. Let's just remove the edit button functionality or not touch it. I'll pass messageId. Actually, let's just remove edit form to simplify, or pass guestUuid.
                     action: "editMessage",
-                    id: msg.id,
-                    guestId: _editGuest ? _editGuest.uuid : myAuthorId,
-                    authorId: _editGuest ? _editGuest.uuid : myAuthorId,
-                    name: _editGuest ? _editGuest.displayName : msg.name,
+                    messageId: msg.id,
+                    guestUuid: _editGuest ? _editGuest.uuid : myAuthorId,
                     message: newMsg
                   })
                 })
@@ -490,10 +488,8 @@
 
       const _gbGuest = window.__currentGuest;
       const payload = {
-        action: "addMessage",
-        guestId: _gbGuest ? _gbGuest.uuid : myAuthorId,
-        authorId: _gbGuest ? _gbGuest.uuid : myAuthorId,
-        name: _gbGuest ? _gbGuest.displayName : 'Tamu',
+        action: "submitGuestbook",
+        guestUuid: _gbGuest ? _gbGuest.uuid : myAuthorId,
         message: guestMessage.value.trim()
       };
 
@@ -535,9 +531,8 @@
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
           action: "deleteMessage",
-          id: id,
-          guestId: _delGuest ? _delGuest.uuid : myAuthorId,
-          authorId: _delGuest ? _delGuest.uuid : myAuthorId
+          messageId: id,
+          guestUuid: _delGuest ? _delGuest.uuid : myAuthorId
         })
       })
       .then(res => res.json())

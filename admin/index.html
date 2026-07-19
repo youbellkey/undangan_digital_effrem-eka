@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Admin — Undangan Effrem &amp; Eka</title>
+    <title>Admin — Undangan Effrem & Eka</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Lato:wght@300;400;700&amp;display=block" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Lato:wght@300;400;700&display=block" rel="stylesheet">
     <!-- QR Code library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="/js/config.js"></script>
     <style>
         body { font-family: 'Lato', sans-serif; }
         .font-cinzel { font-family: 'Cinzel', serif; }
@@ -89,7 +90,7 @@
                 <i class="fas fa-envelope-open-text text-white text-2xl"></i>
             </div>
             <h1 class="font-cinzel text-xl font-bold text-gray-800 mb-1">Admin Panel</h1>
-            <p class="text-gray-400 text-sm mb-8">Undangan Pernikahan Effrem &amp; Eka</p>
+            <p class="text-gray-400 text-sm mb-8">Undangan Pernikahan Effrem & Eka</p>
             <input type="password" id="passwordInput"
                 class="w-full border border-gray-300 rounded-xl px-4 py-3 text-center text-lg mb-4 transition"
                 placeholder="Masukkan password"
@@ -98,7 +99,7 @@
             <p id="loginError" class="text-red-500 text-sm mb-4 hidden">
                 <i class="fas fa-exclamation-circle mr-1"></i>Password salah.
             </p>
-            <button onclick="doLogin()"
+            <button id="loginBtn" onclick="doLogin()"
                 class="w-full bg-red-700 hover:bg-red-800 active:bg-red-900 text-white font-bold py-3 rounded-xl transition-colors text-sm tracking-wide">
                 Masuk
             </button>
@@ -116,7 +117,7 @@
                         <i class="fas fa-envelope-open-text text-white text-sm"></i>
                     </div>
                     <div>
-                        <h1 class="font-cinzel font-bold text-gray-800 text-base leading-tight">Effrem &amp; Eka</h1>
+                        <h1 class="font-cinzel font-bold text-gray-800 text-base leading-tight">Effrem & Eka</h1>
                         <p class="text-xs text-gray-400">Manajemen Tamu Undangan</p>
                     </div>
                 </div>
@@ -161,15 +162,10 @@
                     <span class="hidden sm:inline">Tambah Tamu</span>
                     <span class="sm:hidden">Tambah</span>
                 </button>
-                <label class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm border border-gray-300 cursor-pointer transition-colors shadow-sm">
-                    <i class="fas fa-file-import text-gray-500"></i>
-                    Import JSON
-                    <input type="file" id="importFile" accept=".json" class="hidden" onchange="importJSON(this)">
-                </label>
-                <button onclick="exportJSON()"
+                <button onclick="loadGuests()"
                     class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm border border-gray-300 transition-colors shadow-sm">
-                    <i class="fas fa-file-export text-gray-500"></i>
-                    Export JSON
+                    <i class="fas fa-sync-alt text-gray-500"></i>
+                    Refresh
                 </button>
                 <!-- Search -->
                 <div class="ml-auto flex items-center gap-2 bg-white border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm">
@@ -181,7 +177,11 @@
             </div>
 
             <!-- Table -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-x-auto">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-x-auto relative min-h-[200px]">
+                <div id="loadingOverlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 hidden flex-col items-center justify-center">
+                    <i class="fas fa-spinner fa-spin text-red-700 text-3xl mb-2"></i>
+                    <p class="text-sm font-bold text-gray-600">Memuat Data...</p>
+                </div>
                 <table class="w-full text-sm min-w-[560px]">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
@@ -193,22 +193,10 @@
                         </tr>
                     </thead>
                     <tbody id="guestTableBody" class="divide-y divide-gray-100">
-                        <tr>
-                            <td colspan="5" class="px-4 py-12 text-center text-gray-400">
-                                <i class="fas fa-users text-3xl mb-3 block text-gray-200"></i>
-                                Belum ada tamu. Klik "Tambah Tamu" untuk memulai.
-                            </td>
-                        </tr>
+                        <!-- Filled by JS -->
                     </tbody>
                 </table>
             </div>
-
-            <!-- Footer note -->
-            <p class="text-center text-xs text-gray-400 pb-4 leading-relaxed">
-                Setelah mengubah data tamu, klik <strong class="text-gray-600">Export JSON</strong> →
-                ganti file <code class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-mono">data/guests.json</code>
-                di project → commit &amp; push ke Vercel.
-            </p>
 
         </main>
     </div>
@@ -237,8 +225,8 @@
                     class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition-colors text-sm">
                     Batal
                 </button>
-                <button onclick="saveGuest()"
-                    class="flex-1 bg-red-700 hover:bg-red-800 text-white font-bold py-3 rounded-xl transition-colors text-sm">
+                <button id="saveGuestBtn" onclick="saveGuest()"
+                    class="flex-1 bg-red-700 hover:bg-red-800 text-white font-bold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
                     Simpan
                 </button>
             </div>
@@ -249,7 +237,7 @@
     <div id="linkModal" class="modal-bg hidden" onclick="bgClose(event,'linkModal')">
         <div class="modal-box text-center">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="font-cinzel font-bold text-gray-800 text-lg">Link &amp; QR Code</h2>
+                <h2 class="font-cinzel font-bold text-gray-800 text-lg">Link & QR Code</h2>
                 <button onclick="closeModal('linkModal')" class="text-gray-400 hover:text-gray-600 text-xl w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition">
                     <i class="fas fa-times"></i>
                 </button>
@@ -283,108 +271,143 @@
         </div>
     </div>
 
-    <!-- ════════════════════════ DELETE CONFIRM ══════════════════════════════ -->
-    <div id="deleteModal" class="modal-bg hidden" onclick="bgClose(event,'deleteModal')">
-        <div class="modal-box text-center">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-5">
-                <i class="fas fa-trash text-red-600 text-xl"></i>
-            </div>
-            <h2 class="font-cinzel font-bold text-gray-800 text-lg mb-2">Hapus Tamu</h2>
-            <p class="text-gray-500 text-sm mb-6 leading-relaxed">
-                Yakin ingin menghapus<br>
-                <span id="deleteGuestName" class="font-bold text-gray-800"></span>?<br>
-                Tindakan ini tidak dapat dibatalkan.
-            </p>
-            <div class="flex gap-3">
-                <button onclick="closeModal('deleteModal')"
-                    class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition-colors text-sm">
-                    Batal
-                </button>
-                <button onclick="confirmDelete()"
-                    class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors text-sm">
-                    Hapus
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ════════════════════════════════ SCRIPT ═══════════════════════════════ -->
+    <!-- ════════════════════════ SCRIPT ═══════════════════════════════ -->
     <script>
     /* =========================================================================
-       CONFIG — update BASE_URL to match your deployment URL
+       CONFIG — from config.js
        ========================================================================= */
-    const BASE_URL = 'https://undangan-digital-effrem-eka.vercel.app';
-    const ADMIN_PASS = 'effremeka2026';
+    const API_URL = window.APP_CONFIG.API_URL;
+    const BASE_URL = window.APP_CONFIG.BASE_URL;
 
     /* =========================================================================
        STATE
        ========================================================================= */
     let guests = [];
     let editingIndex  = null; // null = add new, number = edit existing
-    let deletingIndex = null;
     let linkGuest     = null; // guest shown in link modal
+    let adminSession  = sessionStorage.getItem('adminSession') || null;
+
+    /* =========================================================================
+       INIT
+       ========================================================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+        if (adminSession) {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            loadGuests();
+        }
+    });
+
+    /* =========================================================================
+       API UTILS
+       ========================================================================= */
+    async function apiCall(payload) {
+        if (adminSession) {
+            payload.session = adminSession;
+        }
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!data.success && data.message === 'Unauthorized') {
+            doLogout();
+            throw new Error('Sesi telah berakhir. Silakan login kembali.');
+        }
+        if (!data.success) {
+            throw new Error(data.message);
+        }
+        return data;
+    }
+
+    async function apiGet(action) {
+        let url = `${API_URL}?action=${action}`;
+        if (adminSession) url += `&session=${adminSession}`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data.success && data.message === 'Unauthorized') {
+            doLogout();
+            throw new Error('Sesi telah berakhir. Silakan login kembali.');
+        }
+        if (!data.success) {
+            throw new Error(data.message);
+        }
+        return data;
+    }
 
     /* =========================================================================
        AUTH
        ========================================================================= */
-    function doLogin() {
+    async function doLogin() {
         const val = document.getElementById('passwordInput').value;
-        if (val === ADMIN_PASS) {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
-            loadGuests();
-        } else {
-            document.getElementById('loginError').classList.remove('hidden');
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('passwordInput').focus();
+        const btn = document.getElementById('loginBtn');
+        const err = document.getElementById('loginError');
+        
+        err.classList.add('hidden');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: 'adminLogin',
+                    password: val
+                })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                adminSession = data.data.session;
+                sessionStorage.setItem('adminSession', adminSession);
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                loadGuests();
+            } else {
+                err.classList.remove('hidden');
+                document.getElementById('passwordInput').focus();
+            }
+        } catch (e) {
+            showToast('Koneksi bermasalah. Coba lagi.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Masuk';
         }
     }
 
     function doLogout() {
+        adminSession = null;
+        sessionStorage.removeItem('adminSession');
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('dashboard').classList.add('hidden');
         document.getElementById('passwordInput').value = '';
         guests = [];
     }
 
-    document.getElementById('passwordInput').addEventListener('keydown', e => {
-        if (e.key === 'Enter') doLogin();
-    });
-
     /* =========================================================================
        DATA LOADING
        ========================================================================= */
     async function loadGuests() {
+        showLoading(true);
         try {
-            const res = await fetch('/data/guests.json?_=' + Date.now());
-            if (res.ok) {
-                const data = await res.json();
-                guests = Array.isArray(data) ? data : [];
-            } else {
-                guests = [];
-            }
+            const data = await apiGet('listGuests');
+            guests = Array.isArray(data.data) ? data.data : [];
         } catch (e) {
+            showToast(e.message);
             guests = [];
         }
         renderTable();
         updateStats();
+        showLoading(false);
     }
 
-    /* =========================================================================
-       TOKEN GENERATION
-       ========================================================================= */
-    function generateToken() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const bytes = crypto.getRandomValues(new Uint8Array(22));
-        return Array.from(bytes).map(b => chars[b % 62]).join('');
-    }
-
-    function generateUUID() {
-        if (crypto.randomUUID) return crypto.randomUUID();
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-            const r = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
-            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
+    function showLoading(show) {
+        const el = document.getElementById('loadingOverlay');
+        if (show) el.classList.remove('hidden');
+        else el.classList.add('hidden');
     }
 
     /* =========================================================================
@@ -409,8 +432,11 @@
             return;
         }
 
+        // Sort descending by createdAt
+        filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
         tbody.innerHTML = filtered.map((g) => {
-            const realIdx = guests.indexOf(g);
+            const realIdx = guests.findIndex(xg => xg.uuid === g.uuid);
             const isActive = g.status === 'active';
             const badge = isActive
                 ? '<span class="badge-active px-2 py-0.5 text-xs font-bold rounded-full">Aktif</span>'
@@ -418,12 +444,16 @@
             const dateStr = g.createdAt
                 ? new Date(g.createdAt).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'})
                 : '—';
+            
+            const visitLabel = g.visitCount > 0 
+                ? `<span class="text-xs text-blue-500 font-bold ml-2" title="Dibuka ${g.visitCount} kali"><i class="fas fa-eye"></i> ${g.visitCount}</span>` 
+                : '';
 
             return `
             <tr class="hover:bg-gray-50 transition-colors ${isActive ? '' : 'is-inactive'}">
                 <td class="px-4 py-3 text-gray-400 text-xs font-mono">${realIdx + 1}</td>
                 <td class="px-4 py-3">
-                    <p class="font-bold text-gray-800 text-sm">${escHtml(g.displayName)}</p>
+                    <p class="font-bold text-gray-800 text-sm">${escHtml(g.displayName)} ${visitLabel}</p>
                     <p class="text-xs text-gray-400 font-mono mt-0.5 truncate max-w-[220px]" title="${g.token}">${g.token}</p>
                 </td>
                 <td class="px-4 py-3">${badge}</td>
@@ -431,24 +461,20 @@
                 <td class="px-4 py-3">
                     <div class="flex items-center justify-end gap-1">
                         <button class="icon-btn bg-blue-50 text-blue-600 hover:bg-blue-100"
-                            title="Link &amp; QR Code" onclick="openLinkModal(${realIdx})">
+                            title="Link & QR Code" onclick="openLinkModal('${g.uuid}')">
                             <i class="fas fa-link"></i>
                         </button>
                         <button class="icon-btn bg-green-50 text-green-600 hover:bg-green-100"
-                            title="Salin Pesan WhatsApp" onclick="copyWA(${realIdx})">
+                            title="Salin Pesan WhatsApp" onclick="copyWA('${g.uuid}')">
                             <i class="fab fa-whatsapp"></i>
                         </button>
                         <button class="icon-btn bg-yellow-50 text-yellow-600 hover:bg-yellow-100"
-                            title="Edit Nama" onclick="openEditModal(${realIdx})">
+                            title="Edit Nama" onclick="openEditModal('${g.uuid}')">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="icon-btn bg-gray-50 text-gray-500 hover:bg-gray-200"
-                            title="${isActive ? 'Nonaktifkan' : 'Aktifkan'}" onclick="toggleStatus(${realIdx})">
+                            title="${isActive ? 'Nonaktifkan' : 'Aktifkan'}" onclick="toggleStatus('${g.uuid}')">
                             <i class="fas fa-${isActive ? 'ban' : 'check-circle'}"></i>
-                        </button>
-                        <button class="icon-btn bg-red-50 text-red-500 hover:bg-red-100"
-                            title="Hapus" onclick="openDeleteModal(${realIdx})">
-                            <i class="fas fa-trash"></i>
                         </button>
                     </div>
                 </td>
@@ -460,7 +486,7 @@
         const total    = guests.length;
         const active   = guests.filter(g => g.status === 'active').length;
         const inactive = total - active;
-        const visits   = guests.reduce((sum, g) => sum + (g.visitCount || 0), 0);
+        const visits   = guests.reduce((sum, g) => sum + (parseInt(g.visitCount) || 0), 0);
 
         document.getElementById('stat-total').textContent   = total;
         document.getElementById('stat-active').textContent  = active;
@@ -481,10 +507,11 @@
         setTimeout(() => document.getElementById('guestNameInput').focus(), 120);
     }
 
-    function openEditModal(idx) {
-        editingIndex = idx;
+    function openEditModal(uuid) {
+        editingIndex = uuid;
+        const guest = guests.find(g => g.uuid === uuid);
         document.getElementById('guestModalTitle').textContent = 'Edit Nama Tamu';
-        document.getElementById('guestNameInput').value = guests[idx].displayName;
+        document.getElementById('guestNameInput').value = guest.displayName;
         document.getElementById('guestNameError').classList.add('hidden');
         document.getElementById('guestModal').classList.remove('hidden');
         setTimeout(() => {
@@ -494,7 +521,7 @@
         }, 120);
     }
 
-    function saveGuest() {
+    async function saveGuest() {
         const name = document.getElementById('guestNameInput').value.trim();
         const errEl = document.getElementById('guestNameError');
         if (!name) {
@@ -504,67 +531,52 @@
         }
         errEl.classList.add('hidden');
 
-        const now = new Date().toISOString();
+        const btn = document.getElementById('saveGuestBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
-        if (editingIndex === null) {
-            // New guest
-            guests.push({
-                uuid:        generateUUID(),
-                token:       generateToken(),
-                displayName: name,
-                status:      'active',
-                createdAt:   now,
-                updatedAt:   now,
-                visitCount:  0,
-                lastVisit:   null
-            });
-            showToast('✅ Tamu berhasil ditambahkan!');
-        } else {
-            // Edit existing
-            guests[editingIndex].displayName = name;
-            guests[editingIndex].updatedAt   = now;
-            showToast('✅ Nama berhasil diperbarui!');
+        try {
+            if (editingIndex === null) {
+                // New guest
+                await apiCall({ action: 'createGuest', displayName: name });
+                showToast('✅ Tamu berhasil ditambahkan!');
+            } else {
+                // Edit existing
+                await apiCall({ action: 'updateGuest', uuid: editingIndex, displayName: name });
+                showToast('✅ Nama berhasil diperbarui!');
+            }
+            closeModal('guestModal');
+            loadGuests();
+        } catch (e) {
+            showToast('❌ Gagal: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Simpan';
         }
-
-        closeModal('guestModal');
-        renderTable();
-        updateStats();
     }
 
     /* =========================================================================
-       STATUS & DELETE
+       STATUS (Soft Delete / Ban)
        ========================================================================= */
-    function toggleStatus(idx) {
-        const g = guests[idx];
-        g.status = g.status === 'active' ? 'inactive' : 'active';
-        g.updatedAt = new Date().toISOString();
-        renderTable();
-        updateStats();
-        showToast(g.status === 'active' ? '✅ Tamu diaktifkan.' : '🚫 Tamu dinonaktifkan.');
-    }
-
-    function openDeleteModal(idx) {
-        deletingIndex = idx;
-        document.getElementById('deleteGuestName').textContent = guests[idx].displayName;
-        document.getElementById('deleteModal').classList.remove('hidden');
-    }
-
-    function confirmDelete() {
-        if (deletingIndex === null) return;
-        const name = guests[deletingIndex].displayName;
-        guests.splice(deletingIndex, 1);
-        deletingIndex = null;
-        closeModal('deleteModal');
-        renderTable();
-        updateStats();
-        showToast(`🗑️ "${name}" berhasil dihapus.`);
+    async function toggleStatus(uuid) {
+        const guest = guests.find(g => g.uuid === uuid);
+        const newStatus = guest.status === 'active' ? 'inactive' : 'active';
+        
+        try {
+            showToast('Menyimpan perubahan...');
+            await apiCall({ action: 'updateGuest', uuid: uuid, status: newStatus });
+            loadGuests();
+            showToast(newStatus === 'active' ? '✅ Tamu diaktifkan.' : '🚫 Tamu dinonaktifkan.');
+        } catch (e) {
+            showToast('❌ Gagal: ' + e.message);
+        }
     }
 
     /* =========================================================================
        LINK MODAL & QR
        ========================================================================= */
-    function openLinkModal(idx) {
-        linkGuest = guests[idx];
+    function openLinkModal(uuid) {
+        linkGuest = guests.find(g => g.uuid === uuid);
         const url = BASE_URL + '/invite/' + linkGuest.token;
 
         document.getElementById('linkModalName').textContent = linkGuest.displayName;
@@ -595,8 +607,9 @@
         copyToClipboard(buildWAMessage(linkGuest), '💬 Pesan WhatsApp berhasil disalin!');
     }
 
-    function copyWA(idx) {
-        copyToClipboard(buildWAMessage(guests[idx]), '💬 Pesan WhatsApp disalin!');
+    function copyWA(uuid) {
+        const guest = guests.find(g => g.uuid === uuid);
+        copyToClipboard(buildWAMessage(guest), '💬 Pesan WhatsApp disalin!');
     }
 
     /* =========================================================================
@@ -622,40 +635,6 @@
             + 'Effrem & Eka\n'
             + 'beserta keluarga'
         );
-    }
-
-    /* =========================================================================
-       IMPORT / EXPORT
-       ========================================================================= */
-    function importJSON(input) {
-        const file = input.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-            try {
-                const data = JSON.parse(e.target.result);
-                if (!Array.isArray(data)) throw new Error('File harus berisi array JSON.');
-                guests = data;
-                renderTable();
-                updateStats();
-                showToast(`✅ ${data.length} tamu berhasil diimpor!`);
-            } catch (err) {
-                showToast('❌ Gagal membaca JSON: ' + err.message);
-            }
-        };
-        reader.readAsText(file);
-        input.value = '';
-    }
-
-    function exportJSON() {
-        const blob = new Blob([JSON.stringify(guests, null, 2)], { type: 'application/json' });
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href     = url;
-        a.download = 'guests.json';
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast('📥 guests.json berhasil diunduh!');
     }
 
     /* =========================================================================
@@ -706,7 +685,7 @@
     // Keyboard shortcuts
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
-            ['guestModal','linkModal','deleteModal'].forEach(id => closeModal(id));
+            ['guestModal','linkModal'].forEach(id => closeModal(id));
         }
     });
     </script>

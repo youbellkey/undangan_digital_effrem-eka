@@ -1,88 +1,78 @@
 /* ==========================================================================
    InvitationService.js
-   Sole orchestrator for guest-centric invitation rendering.
+   Sole orchestrator for guest-centric invitation rendering via Apps Script.
 
    Responsibilities:
-     1. Extract token from URL pathname  (/invite/<token>)
-     2. Validate + load guest via GuestRepository (with CacheManager)
-     3. Atomically fill ALL UI injection points
-     4. Expose window.__currentGuest as the single source of truth
-     5. Handle errors: retry once → redirect to /404.html (never blank)
-
-   SECURITY:
-     Guest identity is ONLY determined by the validated token.
-     window.__currentGuest is Object.freeze()'d after init — immutable.
-     form submissions in script.js read from here, never from user inputs.
+     1. Extract token from URL pathname (/invite/<token>)
+     2. Fetch guest identity via Apps Script REST API
+     3. Manage local session cache to prevent duplicated visit counts
+     4. Atomically fill ALL UI injection points
+     5. Handle errors resiliently (keep UI alive if API fails)
    ========================================================================== */
 
 class InvitationService {
-  /**
-   * @param {GuestRepository} repo
-   * @param {CacheManager} cache
-   */
-  constructor(repo, cache) {
-    this._repo  = repo;
-    this._cache = cache;
+  constructor(apiUrl) {
+    this._apiUrl = apiUrl;
     this._guest = null;
   }
 
-  /** Read-only reference to the loaded guest. Null for generic access. */
   get guest() { return this._guest; }
 
-  /* ------------------------------------------------------------------ */
-  /* Public                                                               */
-  /* ------------------------------------------------------------------ */
-
-  /**
-   * Main entry point. Call once after DOM and scripts are loaded.
-   * Safe to call multiple times (idempotent after first successful init).
-   */
   async init() {
     const token = this._extractToken();
 
-    // No token in URL → generic invitation view (root access).
-    // Leave UI at its default "Tamu Undangan" state.
+    // No token in URL → generic invitation view
     if (!token) return;
 
-    // Try cache first (no network call on re-open / soft refresh)
-    let guest = this._cache.get(token);
+    // Use sessionStorage to prevent re-fetching and spamming visitCount on the same session
+    const cacheKey = 'guest_data_' + token;
+    const cachedData = sessionStorage.getItem(cacheKey);
 
-    if (!guest) {
-      // Fetch from repository with one automatic retry
-      guest = await this._fetchWithRetry(token, 2);
+    if (cachedData) {
+      try {
+        this._guest = Object.freeze(JSON.parse(cachedData));
+        this._fillUI(this._guest);
+        return;
+      } catch (e) {
+        console.warn('Cache corrupted', e);
+      }
     }
 
-    if (!guest) {
-      this._handleNotFound();
-      return;
+    // Determine if we should increment visit count
+    const visitKey = 'visited_' + token;
+    const hasVisited = sessionStorage.getItem(visitKey);
+    const visitParam = hasVisited ? '' : '&visit=1';
+
+    try {
+      const response = await fetch(`${this._apiUrl}?action=getGuest&token=${token}${visitParam}`);
+      if (!response.ok) throw new Error('Network error');
+      
+      const json = await response.json();
+      if (!json.success || !json.data) {
+        this._handleNotFound();
+        return;
+      }
+
+      this._guest = Object.freeze(json.data);
+      
+      // Cache for session
+      sessionStorage.setItem(cacheKey, JSON.stringify(this._guest));
+      sessionStorage.setItem(visitKey, 'true');
+
+      this._fillUI(this._guest);
+
+    } catch (err) {
+      console.warn('[InvitationService] API Error:', err.message);
+      // Resilient UI: Do NOT redirect to 404 on API failure.
+      // Leave the UI intact so the invitation still functions aesthetically.
     }
-
-    // Freeze to prevent accidental mutation anywhere in the app
-    this._guest = Object.freeze(guest);
-    this._cache.set(token, guest);
-
-    this._fillUI(this._guest);
   }
 
-  /* ------------------------------------------------------------------ */
-  /* Private                                                              */
-  /* ------------------------------------------------------------------ */
-
-  /**
-   * Extract token from pathname: /invite/<token>
-   * Token pattern: Base62, 10–64 characters.
-   * @returns {string|null}
-   */
   _extractToken() {
     const m = window.location.pathname.match(/\/invite\/([A-Za-z0-9]{10,64})/);
     return m ? m[1] : null;
   }
 
-  /**
-   * Inject guest data into every DOM target.
-   * All operations are individually guarded — never throws.
-   * @param {Object} guest
-   */
   _fillUI(guest) {
     const setText = (id, text) => {
       const el = document.getElementById(id);
@@ -95,44 +85,20 @@ class InvitationService {
 
     // ── Welcome overlay ─────────────────────────────────────────────
     setText('welcome-guest-name', guest.displayName);
-    setText('guest-greeting',     'Kepada Yth. ' + guest.displayName);
+    setText('guest-greeting', 'Kepada Yth. ' + guest.displayName);
 
     // ── RSVP form ────────────────────────────────────────────────────
     setText('rsvpNameDisplay', guest.displayName);
-    setVal ('rsvpGuestId',    guest.uuid);
+    setVal('rsvpGuestId', guest.uuid);
 
     // ── Guestbook form ───────────────────────────────────────────────
     setText('guestbookNameDisplay', guest.displayName);
-    setVal ('guestbookGuestId',    guest.uuid);
+    setVal('guestbookGuestId', guest.uuid);
 
     // ── Global reference for script.js form submissions ──────────────
     window.__currentGuest = this._guest;
   }
 
-  /**
-   * Fetch guest from repository with automatic retry on network failure.
-   * @param {string} token
-   * @param {number} maxAttempts
-   * @returns {Promise<Object|null>}
-   */
-  async _fetchWithRetry(token, maxAttempts) {
-    for (let i = 0; i < maxAttempts; i++) {
-      try {
-        const guest = await this._repo.getByToken(token);
-        if (guest) return guest;
-        // Token not found in data → no point retrying
-        return null;
-      } catch (err) {
-        console.warn('[InvitationService] Attempt', i + 1, 'failed —', err.message);
-        if (i < maxAttempts - 1) {
-          await new Promise(r => setTimeout(r, 600));
-        }
-      }
-    }
-    return null;
-  }
-
-  /** Redirect to the elegant 404 page. Never leaves the user on a blank screen. */
   _handleNotFound() {
     const from = encodeURIComponent(window.location.pathname);
     window.location.replace('/404.html?from=' + from);

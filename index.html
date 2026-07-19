@@ -527,20 +527,19 @@
         <p class="text-gray-400 mt-4 text-sm tracking-widest uppercase">Klik area luar untuk menutup</p>
     </div>
 
-    <script src="/js/GuestRepository.js"></script>
-    <script src="/js/CacheManager.js"></script>
+    <script src="/js/config.js"></script>
     <script src="/js/InvitationService.js"></script>
-    <script src="/js/MessageGenerator.js"></script>
-    <script src="script.js?v=56"></script>
+    <script src="script.js?v=57"></script>
     <script src="effects.js?v=56"></script>
     <script>
       /* ── Initialize Guest-Centric Invitation System ── */
       (function () {
-        var _repo  = new GuestRepository('/data/guests.json');
-        var _cache = new CacheManager();
-        window.__invitationService = new InvitationService(_repo, _cache);
+        // Fallback resilient UI jika API gagal
+        window.__invitationService = new InvitationService(window.APP_CONFIG.API_URL);
         window.__invitationService.init().catch(function (e) {
           console.warn('[InvitationService]', e);
+          // Biarkan UI terbuka meskipun gagal ambil identitas
+          document.getElementById('welcome-guest-name').textContent = 'Tamu Undangan';
         });
       })();
     </script>
