@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/invite/:token", "destination": "/index.html" }
+    { "source": "/invite/(.*)", "destination": "/" }
   ],
   "cleanUrls": true,
   "trailingSlash": false
