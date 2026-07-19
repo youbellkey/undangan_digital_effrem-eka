@@ -92,14 +92,12 @@
   font-size: clamp(2.6rem, 9.5vw, 3.8rem) !important;
   font-weight: 700 !important;
   line-height: 1.25 !important;
-  background: linear-gradient(135deg, #FFF9E6 0%, #F1C40F 25%, #E1B12C 50%, #F39C12 75%, #FFF9E6 100%) !important;
-  background-size: 200% auto !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  -webkit-text-stroke: 0.1px #333333 !important; /* Elegant hairline dark grey outline */
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: #333333 !important; /* Solid elegant dark grey fill */
+  -webkit-text-stroke: 0.6px #D4AF37 !important; /* Premium bright gold outline */
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45)) 
-          drop-shadow(0 0 12px rgba(255, 193, 7, 0.65)) !important;
-  animation: welcome-gold-shimmer 8s linear infinite !important;
+          drop-shadow(0 0 12px rgba(255, 193, 7, 0.45)) !important; /* Gold ambient glow */
   display: inline-block !important;
   margin: 14px 0 !important;
   text-align: center;
