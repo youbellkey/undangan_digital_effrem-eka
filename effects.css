@@ -94,7 +94,7 @@
   line-height: 1.25 !important;
   background: none !important;
   -webkit-background-clip: initial !important;
-  -webkit-text-fill-color: #555555 !important; /* Solid elegant dark grey fill */
+  -webkit-text-fill-color: #888888 !important; /* Solid elegant medium-light grey fill */
   filter: drop-shadow(0 1.2px 2px rgba(0, 0, 0, 0.35)) 
           drop-shadow(0 0 4px rgba(255, 193, 7, 0.55)) !important; /* Tight gold ambient glow */
   display: inline-block !important;
