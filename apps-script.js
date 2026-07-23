@@ -138,7 +138,11 @@ function doPost(e) {
       case 'adminLogin':
         return handleAdminLogin(body);
       case 'createGuest':
+        if (!isValidAdmin(body.session)) return jsonResponse(false, 'Unauthorized');
         return handleCreateGuest(body);
+      case 'getRSVP':
+        if (!isValidAdmin(body.session)) return jsonResponse(false, 'Unauthorized');
+        return handleGetRSVP(body);
       case 'updateGuest':
         if (!isValidAdmin(body.session)) return jsonResponse(false, 'Unauthorized');
         return handleUpdateGuest(body);
@@ -316,6 +320,23 @@ function handleSubmitRSVP(body) {
   sheet.appendRow([uuid, guestUuid, guest.displayName, attendance, guestCount || 0, now]);
   
   return jsonResponse(true, 'RSVP saved');
+}
+
+function handleGetRSVP(body) {
+  const rsvp = getSheetData('RSVP');
+  const guests = getSheetData('Guests');
+  
+  const result = rsvp.map(r => {
+    const guest = guests.find(g => g.uuid === r.guestUuid);
+    return {
+      name: guest ? guest.displayName : 'Unknown',
+      status: r.attendance,
+      count: r.guestCount,
+      timestamp: r.timestamp
+    };
+  });
+  
+  return jsonResponse(true, 'Success', result);
 }
 
 function handleSubmitGuestbook(body) {

@@ -258,4 +258,107 @@ document.addEventListener('DOMContentLoaded', () => {
         el.innerHTML = ''; 
         twObserver.observe(el);
     });
+
+    /* 9. TIMELESS PREMIUM AVATAR RING PATCH FOR PHOTO FRAMES */
+    document.querySelectorAll('.c-photo-frame').forEach(el => {
+        new PhotoFrameAvatarRing(el);
+    });
 });
+
+class PhotoFrameAvatarRing {
+    constructor(element) {
+        this.el = element;
+        this.currentScroll = 0;
+        this.targetScroll = 0;
+        this.sweepAngle = 0;
+        this.sweepVelocity = 0;
+        this.currentScale = 1;
+        this.currentGlow = 0.2;
+
+        this.lerpScroll = 0.08;
+        this.lerpScale = 0.15;
+        this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        this.isAnimating = false;
+        this.isVisible = false;
+        this.scrollContainer = document.getElementById('main-scroll') || window;
+
+        this.render = this.render.bind(this);
+        this.onScroll = this.onScroll.bind(this);
+
+        this.initObservers();
+
+        window.addEventListener('scroll', this.onScroll, { passive: true });
+        if (this.scrollContainer && this.scrollContainer !== window) {
+            this.scrollContainer.addEventListener('scroll', this.onScroll, { passive: true });
+        }
+    }
+
+    initObservers() {
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) this.sleep();
+            else this.wakeUp();
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            this.isVisible = entries[0].isIntersecting;
+            if (this.isVisible) this.wakeUp();
+            else this.sleep();
+        }, { threshold: 0 });
+        
+        observer.observe(this.el);
+    }
+
+    getScrollTop() {
+        if (this.scrollContainer && this.scrollContainer !== window) {
+            return this.scrollContainer.scrollTop || window.scrollY || document.documentElement.scrollTop;
+        }
+        return window.scrollY || document.documentElement.scrollTop;
+    }
+
+    onScroll() {
+        this.targetScroll = this.getScrollTop();
+        if (!this.isAnimating && this.isVisible && !this.prefersReducedMotion) {
+            this.wakeUp();
+        }
+    }
+
+    sleep() { this.isAnimating = false; }
+    wakeUp() {
+        if (this.prefersReducedMotion) return;
+        this.isAnimating = true;
+        requestAnimationFrame(this.render);
+    }
+
+    render() {
+        if (!this.isAnimating) return;
+
+        let velocity = this.targetScroll - this.currentScroll;
+        let absVelocity = Math.abs(velocity);
+        this.currentScroll += velocity * this.lerpScroll;
+
+        let targetScale = absVelocity > 1 ? Math.max(0.97, 1 - (absVelocity * 0.0008)) : 1;
+        this.currentScale += (targetScale - this.currentScale) * this.lerpScale;
+
+        let acceleration = velocity * 0.06;
+        this.sweepVelocity += acceleration;
+        this.sweepVelocity *= 0.92;
+        this.sweepAngle += this.sweepVelocity;
+
+        let targetGlow = 0.2 + Math.min(absVelocity * 0.005, 0.3);
+        this.currentGlow += (targetGlow - this.currentGlow) * 0.1;
+
+        this.el.style.setProperty('--scale', this.currentScale.toFixed(3));
+        this.el.style.setProperty('--sweep-angle', `${this.sweepAngle.toFixed(1)}deg`);
+        this.el.style.setProperty('--glow-intensity', this.currentGlow.toFixed(3));
+
+        if (absVelocity < 0.1 && Math.abs(this.sweepVelocity) < 0.1 && Math.abs(1 - this.currentScale) < 0.001) {
+            this.currentScroll = this.targetScroll;
+            this.sleep();
+        } else {
+            requestAnimationFrame(this.render);
+        }
+    }
+}
+
+

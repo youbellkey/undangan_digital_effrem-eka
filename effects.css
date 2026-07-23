@@ -917,3 +917,91 @@ body.is-opened .hero-cross-swivel {
                 var(--shadow-md) !important;
   }
 }
+
+/* ==========================================================================
+   TIMELESS PREMIUM AVATAR RING PATCH FOR MEMPELAI PHOTO FRAMES (.c-photo-frame)
+   - 100% Circular Bounding Box (No Square Edges)
+   - Responsive Theme-Matched Rotating Glow & Sweep
+   - Dynamic Physics Lerp & Scroll Velocity
+   ========================================================================== */
+
+.c-photo-frame {
+  position: relative;
+  border-radius: 50% !important;
+  box-sizing: border-box;
+  /* CSS Variables with defaults, updated dynamically by JS */
+  --scale: 1;
+  --sweep-angle: 0deg;
+  --sweep-opacity: 0;
+  --glow-intensity: 0.2;
+  
+  transform: scale(var(--scale, 1));
+  will-change: transform, box-shadow;
+  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Ensure photo frame child elements are strictly circular */
+.c-photo-frame, 
+.c-photo-frame * {
+  border-radius: 50% !important;
+}
+
+/* Ambient Far Glow (Circular) */
+.c-photo-frame::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50% !important;
+  background: conic-gradient(
+    from 0deg, 
+    var(--dayak-red, #D32F2F), 
+    var(--dayak-yellow, #FFC107), 
+    var(--dayak-red-dark, #8B0000), 
+    var(--dayak-yellow, #FFC107), 
+    var(--dayak-red, #D32F2F)
+  );
+  filter: blur(12px);
+  opacity: calc(var(--glow-intensity, 0.2) * 1.8);
+  animation: avatar-ring-spin 22s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+  will-change: opacity, transform;
+}
+
+/* Sharp Rotating Ring Border & Neon Sweep (Circular) */
+.c-photo-frame::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50% !important;
+  background: conic-gradient(
+    from var(--sweep-angle, 0deg),
+    var(--dayak-red, #D32F2F) 0deg,
+    var(--dayak-yellow, #FFC107) 120deg,
+    rgba(255, 233, 168, 0.95) 240deg,
+    var(--dayak-red, #D32F2F) 360deg
+  );
+  padding: 3px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 5px var(--glow-color, rgba(211, 47, 47, 0.65)));
+  will-change: transform;
+}
+
+/* Hover state enhancement */
+.c-photo-frame:hover {
+  transform: scale(1.06) !important;
+  --glow-intensity: 0.45;
+  box-shadow: 0 0 25px var(--glow-color, rgba(211, 47, 47, 0.65)) !important;
+}
+
+@keyframes avatar-ring-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
